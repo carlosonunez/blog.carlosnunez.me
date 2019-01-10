@@ -1,12 +1,19 @@
 ---
+language: minimal
+env:
+  matrix:
+  - DOCKER_COMPOSE_VERSION=1.22.0
 services:
 - docker
 branches:
   only:
   - master
 before_install:
-  - git clone https://github.com/carlosonunez/https-hugo-bloggen
-  - mv *.{md,markdown} posts
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname
+    -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
 stages:
   - deploy
 jobs:
@@ -14,4 +21,8 @@ jobs:
   - stage: deploy
     name: Deploy the blog up to AWS
     script:
+      - git clone https://github.com/carlosonunez/https-hugo-bloggen blog-gen
+      - cd blog-gen
+      - ln -s ../posts posts
+      - make create_site_folder_so_travis_works 
       - make deploy
