@@ -1,0 +1,4 @@
+# Don't index environment metadata or dotenv's
+.env_info
+.env
+.env.*
