@@ -1,0 +1,17 @@
+---
+services:
+- docker
+branches:
+  only:
+  - master
+before_install:
+  - git clone https://github.com/carlosonunez/https-hugo-bloggen
+  - mv *.{md,markdown} posts
+stages:
+  - deploy
+jobs:
+  include:
+  - stage: deploy
+    name: Deploy the blog up to AWS
+    script:
+      - make deploy
