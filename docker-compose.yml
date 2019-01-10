@@ -1,0 +1,8 @@
+version: "3.4"
+services:
+  travis:
+    image: skandyla/travis-cli
+    volumes:
+      - "$PWD:/app"
+      - "$HOME/.travis:/root/.travis"
+    working_dir: /app
