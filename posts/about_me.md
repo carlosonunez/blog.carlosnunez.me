@@ -4,7 +4,8 @@ date: "2019-01-12"
 menu: "main"
 slug: "about-me"
 linktitle: "About Me"
-image: https://media.licdn.com/dms/image/C4E03AQH80wnde9e_Vw/profile-displayphoto-shrink_200_200/0?e=1553126400&v=beta&t=QITNRK_xtLEc5SAL_-EVJep9zUiSbK1SFPMFuEVGEm8
+image: /static/images/me_20190114.jpg
+weight: 999
 ---
 
 I'm a Cloud and Software Consultant. Brooklyn-born, Dallas-based.
@@ -18,5 +19,6 @@ faster with less risk and more awesome.
 - Site and Platform Reliability Engineering
 - Private and Public Cloud Automation
 
-![LinkedIn](/static/icons/linkedin.png =16x16) [/in/carlosindfw](https://linkedin.com/in/{{< param linkedin >}})
-![Twitter](/static/icons/twitter.png =16x16) [@easiestnameever](https://twitter.com/{{< param twitter >}})
+{{< social_about_me social_network="linkedin" url_format="https://linkedin.com/in/%s" >}}
+
+{{< social_about_me social_network="twitter" url_format="https://twitter.com/@%s" >}}

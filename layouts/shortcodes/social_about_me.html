@@ -1,0 +1,5 @@
+{{- $env_key := ( printf "%s_HANDLE" (.Get "social_network" | upper ) ) -}}
+{{- $screen_name := ( getenv $env_key ) -}}
+<section id="about-me-social-banner">
+  <img src="/static/icons/{{ .Get "social_network" }}.png" length=16 width=16 style="float: left; vertical-align: middle;"> <a href="{{ printf (.Get "url_format") $screen_name }}">{{ $screen_name }}</a>
+</section>
