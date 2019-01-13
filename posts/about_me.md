@@ -4,6 +4,7 @@ date: "2019-01-12"
 menu: "main"
 slug: "about-me"
 linktitle: "About Me"
+image: https://media.licdn.com/dms/image/C4E03AQH80wnde9e_Vw/profile-displayphoto-shrink_200_200/0?e=1553126400&v=beta&t=QITNRK_xtLEc5SAL_-EVJep9zUiSbK1SFPMFuEVGEm8
 ---
 
 I'm a Cloud and Software Consultant. Brooklyn-born, Dallas-based.
