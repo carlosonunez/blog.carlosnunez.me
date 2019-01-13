@@ -3,6 +3,7 @@ title: I'm Carlos!
 date: "2019-01-12"
 menu: "main"
 slug: "about-me"
+linktitle: "About Me"
 ---
 
 I'm a Cloud and Software Consultant. Brooklyn-born, Dallas-based.
@@ -16,5 +17,5 @@ faster with less risk and more awesome.
 - Site and Platform Reliability Engineering
 - Private and Public Cloud Automation
 
-![LinkedIn](/static/icons/linkedin.png =16x16) [/in/carlosindfw](https://linkedin.com/in/{{ .Site.Params.linkedin }})
-![Twitter](/static/icons/twitter.png =16x16) [@easiestnameever](https://twitter.com/{{ .Site.Params.twitter }})
+![LinkedIn](/static/icons/linkedin.png =16x16) [/in/carlosindfw](https://linkedin.com/in/{{< param linkedin >}})
+![Twitter](/static/icons/twitter.png =16x16) [@easiestnameever](https://twitter.com/{{< param twitter >}})
