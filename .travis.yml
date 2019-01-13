@@ -24,5 +24,7 @@ jobs:
       - git clone https://github.com/carlosonunez/https-hugo-bloggen blog-gen
       - cd blog-gen
       - ln -s ../posts posts
+      - ln -s ../static static
+      - ln -f -s ../config.tmpl.toml config.tmpl.toml
       - make create_site_folder_so_travis_works 
       - make deploy
