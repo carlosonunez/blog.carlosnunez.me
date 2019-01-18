@@ -1,0 +1,12 @@
+baseurl = "http://localhost"
+title = "neurons firing from a keyboard"
+author = "Carlos Nunez"
+paginate = "15"
+theme = "arabica"
+enableInlineShortcodes = true
+keywords = "devops,systems administration,sysadmin,agile,cloud native,kubernetes,aws,azure,programming,bash,ruby,java,python,powershell,docker,openshift,rancher,git,"
+[params]
+  description = "thoughts about devops, technology, and faster business from a random guy from dallas."
+  dateFormatUse = "2018-01-01"
+  twitter = "easiestnameever"
+  linkedin = "carlosindfw"

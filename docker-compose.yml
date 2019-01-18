@@ -6,3 +6,22 @@ services:
       - "$PWD:/app"
       - "$HOME/.travis:/root/.travis"
     working_dir: /app
+  local-blog:
+    ports:
+      - 8080:8080
+    network_mode: host
+    build:
+      context: ../https-hugo-bloggen
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "${PWD}/../https-hugo-bloggen:/app"
+      - "${PWD}/static:/app/static"
+      - "${PWD}/posts:/app/posts"
+      - "${PWD}/layouts:/app/layouts"
+      - "${PWD}/config.toml.tmpl:/app/config.toml.tmpl"
+      - "${PWD}/.env.test:/app/.env"
+    working_dir: /app
+    environment:
+      - HOST_PWD=${PWD}
+      - VERBOSE=true
+    command: start_local_blog
