@@ -5,5 +5,5 @@
 !.env.test
 
 # When testing locally, don't commit generated sites or themes
-sites/
+site/
 themes/

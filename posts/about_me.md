@@ -7,7 +7,7 @@ linktitle: "About Me"
 weight: 1
 ---
 
-<img src="images/me_20190114.jpg" height=25% width=25%>
+<img src="/images/me_20190114.jpg" height=45% width=45%>
 
 I'm a Cloud and Software Consultant. Brooklyn-born, Dallas-based.
 
