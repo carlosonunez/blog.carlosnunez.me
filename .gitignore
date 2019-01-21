@@ -2,3 +2,8 @@
 .env_info
 .env
 .env.*
+!.env.test
+
+# When testing locally, don't commit generated sites or themes
+site/
+themes/

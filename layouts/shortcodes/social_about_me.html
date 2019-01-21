@@ -1,0 +1,10 @@
+{{- $social_network_env_key := ( printf "%s_HANDLE" (.Get "social_network" | upper ) ) -}}
+{{- $screen_name := ( getenv $social_network_env_key ) -}}
+<div style="padding-bottom: 8px;" id="social-network">
+  <img style="vertical-align: middle; float: left; padding-right: 10px; margin-top: 8px;"
+       src="/icons/{{ .Get "social_network" }}.png"
+       height=16px
+       width=16px
+       alt="{{ .Get "social_network" }} icon">
+  <a href="{{ printf (.Get "url_format") $screen_name }}">{{ $screen_name }}</a>
+</div>
