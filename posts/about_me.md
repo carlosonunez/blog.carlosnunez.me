@@ -4,9 +4,10 @@ date: "2019-01-12"
 menu: "main"
 slug: "about-me"
 linktitle: "About Me"
-image: /static/images/me_20190114.jpg
-weight: 999
+weight: 1
 ---
+
+<img src="images/me_20190114.jpg" height=25% width=25%>
 
 I'm a Cloud and Software Consultant. Brooklyn-born, Dallas-based.
 
