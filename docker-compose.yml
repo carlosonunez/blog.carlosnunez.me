@@ -6,6 +6,13 @@ services:
       - "$PWD:/app"
       - "$HOME/.travis:/root/.travis"
     working_dir: /app
+  wait-for-blog:
+    image: byrnedo/alpine-curl
+    network_mode: host
+    entrypoint:
+      - sh
+      - "-c"
+      - "until curl -o /dev/null -s localhost:8080; do echo -ne 'Waiting for site...\r' && sleep 1; done; echo -ne 'Waiting for site...ready.\n'"
   local-blog:
     ports:
       - 8080:8080
@@ -15,10 +22,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - "${PWD}/../https-hugo-bloggen:/app"
-      - "${PWD}/static:/app/static"
-      - "${PWD}/posts:/app/posts"
-      - "${PWD}/layouts:/app/layouts"
-      - "${PWD}/config.toml.tmpl:/app/config.toml.tmpl"
       - "${PWD}/.env.test:/app/.env"
     working_dir: /app
     environment:

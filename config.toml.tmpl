@@ -12,3 +12,35 @@ keywords = "{{ file.Read "global_keywords" | strings.ReplaceAll "\n" "," }}"
   dateFormatUse = "2018-01-01"
   twitter = "{{ .Env.TWITTER_HANDLE }}"
   linkedin = "{{ .Env.LINKEDIN_HANDLE }}"
+[menu]
+  [[ menu.main ]]
+    identifier = "about-me"
+    name = "About Me"
+    url = "/about-me"
+    weight = -10
+
+  [[ menu.main ]]
+    identifier = "employer"
+    name = "{{ .Env.CURRENT_EMPLOYER }}"
+    url = "{{ .Env.CURRENT_EMPLOYER_URL }}"
+    weight = -9
+
+  [[ menu.main ]]
+    identifier = "resume"
+    name = "Resume"
+    url = "http://resume.carlosnunez.me"
+    weight = -8
+
+  [[ menu.main ]]
+    identifier = "linkedin"
+    name = "/in/{{ .Env.LINKEDIN_HANDLE }}"
+    pre = "<img src=/icons/linkedin.png height=16px weight=16px>"
+    url = "https://linkedin.com/in/{{ .Env.LINKEDIN_HANDLE }}"
+    weight = -7
+
+  [[ menu.main ]]
+    identifier = "twitter"
+    name = "@easiestnameever"
+    pre = "<img src=/icons/twitter.png height=16px weight=16px>"
+    url = "https://twitter.com/@{{ .Env.TWITTER_HANDLE }}"
+    weight = -6

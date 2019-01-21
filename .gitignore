@@ -1,3 +1,5 @@
+.DS_Store
+
 # Don't index environment metadata or dotenv's
 .env_info
 .env
@@ -7,3 +9,6 @@
 # When testing locally, don't commit generated sites or themes
 site/
 themes/
+
+# Ignore auto-generated config
+config.toml

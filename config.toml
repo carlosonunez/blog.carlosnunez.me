@@ -10,3 +10,35 @@ keywords = "devops,systems administration,sysadmin,agile,cloud native,kubernetes
   dateFormatUse = "2018-01-01"
   twitter = "easiestnameever"
   linkedin = "carlosindfw"
+[menu]
+  [[ menu.main ]]
+    identifier = "about-me"
+    name = "About Me"
+    url = "/about-me"
+    weight = -10
+
+  [[ menu.main ]]
+    identifier = "employer"
+    name = "Contino"
+    url = "https://contino.io"
+    weight = -9
+
+  [[ menu.main ]]
+    identifier = "resume"
+    name = "Resume"
+    url = "http://resume.carlosnunez.me"
+    weight = -8
+
+  [[ menu.main ]]
+    identifier = "linkedin"
+    name = "/in/carlosindfw"
+    pre = "<img src=/icons/linkedin.png height=16px weight=16px>"
+    url = "https://linkedin.com/in/carlosindfw"
+    weight = -7
+
+  [[ menu.main ]]
+    identifier = "twitter"
+    name = "@easiestnameever"
+    pre = "<img src=/icons/twitter.png height=16px weight=16px>"
+    url = "https://twitter.com/@easiestnameever"
+    weight = -6
