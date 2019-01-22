@@ -23,8 +23,8 @@ jobs:
     script:
       - git clone https://github.com/carlosonunez/https-hugo-bloggen blog-gen
       - cd blog-gen
+      - rm -rf static config.toml.tmpl
       - mkdir content
-      - rm -rf content static config.toml.tmpl
       - cp -frv ../static/ static
       - cp -frv ../content/* content/
       - cp -frv ../layouts/* layouts/
