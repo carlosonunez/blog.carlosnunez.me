@@ -6,6 +6,28 @@ services:
       - "$PWD:/app"
       - "$HOME/.travis:/root/.travis"
     working_dir: /app
+
+  deploy-blog:
+    build:
+      context: ${BLOG_GEN_DIRECTORY:-./https-hugo-bloggen}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "${BLOG_GEN_DIRECTORY:-./https-hugo-bloggen}:/app"
+      - "${HOST_PWD}/.env_info:/app/.env_info"
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_REGION
+    working_dir: /app
+    environment:
+      - HOST_PWD=${PWD}
+      - VERBOSE=true
+      - ENVIRONMENT="${ENVIRONMENT:-production}"
+    entrypoint:
+      - sh
+      - "-c"
+      - "make get_${ENVIRONMENT:-production}_env && make deploy"
+
   wait-for-blog:
     image: byrnedo/alpine-curl
     network_mode: host
@@ -13,15 +35,16 @@ services:
       - sh
       - "-c"
       - "until curl -o /dev/null -s localhost:8080; do echo -ne 'Waiting for site...\r' && sleep 1; done; echo -ne 'Waiting for site...ready.\n'"
-  local-blog:
+
+  start-local-blog:
     ports:
       - 8080:8080
     network_mode: host
     build:
-      context: ../https-hugo-bloggen
+      context: ${BLOG_GEN_DIRECTORY:-./https-hugo-bloggen}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - "${PWD}/../https-hugo-bloggen:/app"
+      - "${BLOG_GEN_DIRECTORY:-./https-hugo-bloggen}:/app"
       - "${PWD}/.env.test:/app/.env"
     working_dir: /app
     environment:

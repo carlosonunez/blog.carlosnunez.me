@@ -21,12 +21,6 @@ jobs:
   - stage: deploy
     name: Deploy the blog up to AWS
     script:
-      - git clone https://github.com/carlosonunez/https-hugo-bloggen blog-gen
-      - cd blog-gen
-      - rm -rf posts static config.toml.tmpl
-      - cp -frv ../static/ static
-      - cp -frv ../posts/ posts
-      - cp -frv ../layouts/* layouts/
-      - cp ../config.toml.tmpl config.toml.tmpl
-      - make create_site_folder_so_travis_works 
-      - make deploy
+      - git clone https://github.com/carlosonunez/https-hugo-bloggen
+      - docker-compose run --rm get-production-env
+      - docker-compose run --rm deploy-blog
