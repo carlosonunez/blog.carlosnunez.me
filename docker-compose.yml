@@ -13,7 +13,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - "${BLOG_GEN_DIRECTORY:-./https-hugo-bloggen}:/app"
-      - "${HOST_PWD}/.env_info:/app/.env_info"
+      - "$PWD/.env_info:/app/.env_info"
     environment:
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
