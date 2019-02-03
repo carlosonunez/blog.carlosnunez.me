@@ -2,13 +2,18 @@
 title: "Getting Into DevOps."
 date: "2017-03-02 03:58:15"
 slug: "getting-into-devops"
+image: "/images/getting-into-devops/header.png"
 ---
 
 I've observed a sharp uptick of developers and systems administrators interested in "getting into DevOps" within the last year or so. This pattern makes sense, too: in an age where a single developer can spin up a globally-distributed infrastructure for an application with a few dollars and a few API calls, the gap between development and systems administration is closer than ever. While I've seen plenty of blog posts and articles about cool DevOps tools and thoughts to think about, I've seen fewer content on pointers and suggestions for people looking to get into this work.
 
 My goal with this article is to, hopefully, draw what that path looks like. My thoughts are based upon several interviews, chats, late-night discussions on reddit.com/r/devops and random conversation, likely over beer and delicious food. I'm also interested in hearing feedback from those that have made the jump; if you have, please email me. I'd love to hear your thoughts and stories.
 
+
+
 # Olde World IT
+
+![](/images/getting-into-devops/olde-world.jpg)
 
 Understading history is key to understanding the future, and DevOps is no exception. To understand the pervasiveness and popularity of the DevOps movement, it's helpful to understand what IT was like in the late-90's and most of the '00s. This was my experience.
 
@@ -38,6 +43,8 @@ As you could probably gather from my short snippet of history above, many, many 
 
 # DevOps Isn't A Tiger Team
 
+![](/images/getting-into-devops/tiger-team.jpg)
+
 You might be thinking "What is Carlos going on about, and when is he going to talk about Ansible playbooks?" I love Ansible tons, but hang on; this is important.
 
 Have you been assigned to a project and ever had to interact with the "DevOps" team? Or did you have to rely on a "Configuraiton Management" or "CI/CD" team to ensure that your pipeline was set up properly? Were you ever beholden to attending meetings about your release and what it pertains to weeks after the work was marked "Code Complete?"
@@ -62,6 +69,8 @@ Adam Jacobs said it best: "DevOps is the word we use to describe the operational
 
 # Skills
 
+![](/images/getting-into-devops/skills.jpg)
+
 A common question I've gotten asked is "What do I need to know to get into DevOps?" The answer, like most open-ended questions like this, is "it depends."
 
 At the moment, the "DevOps engineer" varies from company to company. Smaller companies that have plenty of software developers but fewer folks that understand infrastructure will likely look for people with more experience administrating systems. Other, usually larger and/or older companies, that have a solid sysadmin organization will likely optimize for something closer to a Google SRE, i.e. "a software engineer to design an operations function."[2] This isn't written in stone, however, as, like any technology job, the decision largely depends on the hiring manager sponsoring it.
@@ -85,6 +94,8 @@ If you're a developer that's looking to make this change, I highly recommend lea
 If this sounds overwhelming, you aren't alone. Fortunately, there are plenty of small projects to dip your feet into. One such toy project is Gary Stafford's Voter Service, a simple Java-based voting platform. [4] We ask our candidates to take the service from Github to production infrastructure through a pipeline. One can combine that with Rob Mile's awesome DevOps Tutorial repository [5] to learn about ways of doing this.
 
 Another great way of becoming familiar with these tools is taking popular services and setting up an infrastructure for them using nothing but AWS and configuration management. Set it up manually first to get a good idea of what to do, and then replicate what you just did using nothing but CloudFormation (or Terraform) and Ansible. Surprisingly, this is a large part of the work that we Infrastructure Devs do for our clients on a daily basis. Our clients find this work to be highly valuable!
+
+![](/images/getting-into-devops/books.jpg)
 
 # Theory Books
 
@@ -131,3 +142,5 @@ Good luck!
 [2] https://landing.google.com/sre/interview/ben-treynor.html
 
 [3] https://thehftguy.com/2016/11/01/docker-in-production-an-history-of-failure/
+
+{{< about_me >}}

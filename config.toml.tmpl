@@ -4,10 +4,12 @@ author = "{{ file.Read "AUTHOR" | strings.ReplaceAll "\n" "" }}"
 paginate = "{{ .Env.HUGO_PAGINATE }}"
 theme = "{{ path.Base (.Env.HUGO_THEME_REPO_URL)  }}"
 enableInlineShortcodes = true
+enableRobotsTXT = true
+canonifyURLs = true
 {{ if (file.Exists "global_keywords") -}}
-keywords = "{{ file.Read "global_keywords" | strings.ReplaceAll "\n" "," }}"
 {{- end }}
 [params]
+  keywords = "{{ file.Read "global_keywords" | strings.ReplaceAll "\n" ","}},technology,IT,tech,business"
   description = "{{ .Env.HUGO_DESCRIPTION }}"
   dateFormatUse = "2018-01-01"
   twitter = "{{ .Env.TWITTER_HANDLE }}"

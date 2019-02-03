@@ -2,6 +2,7 @@
 title: "You're a better engineer than you think."
 date: "2015-12-02 05:22:53"
 slug: "youre-a-better-engineer-than-you-think"
+image: "/images/youre-a-better-engineer-than-you-think/header.png"
 ---
 
 I was quite surprised to discover that thousands of people were members of the "Imposter Syndrome" Google+ group within my first month at Google.
@@ -48,6 +49,4 @@ Do you care about the quality of your work? Do you document what you're doing to
 
 Merriam-Webster defines [passion](http://www.merriam-webster.com/thesaurus/textbook[adjective] "") as a *a strong feeling of enthusiasm or excitement for something or about doing something*. If you're passionate about what you're doing and it shows through your work, in my book, even if it pales in comparison to what it should ideally look like, you're a good engineer in my eyes. So much easier than checklists in my experience.
 
-# About Me
-
-*Carlos Nunez is a site reliability engineer for [Namely](http://www.namely.com ""), a human capital management and payroll solution made for humans. He loves bikes, brews and all things Windows DevOps and occasionally helps companies plan and execute their technology strategies.*
+{{< about_me >}}

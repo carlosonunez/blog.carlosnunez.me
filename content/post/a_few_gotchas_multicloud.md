@@ -367,3 +367,5 @@ much easier to do. However, both providers aren't created equal, and the AWS sup
 that exists is, at this time of writing, significantly more extensive. While this
 certainly doesn't make using Azure with Terraform or Packer impossible, you might
 find yourself doing more homework than initially expected!
+
+{{< about_me >}}
