@@ -5,6 +5,12 @@ slug: "getting-output-from-docker-containers-from-within-ansible"
 description: >-
   Deploying Docker containers through Ansible is easy.
   Getting output? Not so much. This post explains how to work around this.
+keywords:
+  - ansible
+  - docker
+  - containers
+  - programming
+  - coding
 ---
 
 # The Problem
@@ -13,7 +19,7 @@ You want to use Ansible's `docker_container` module to do stuff, but want to als
 
 # The Solution
 
-Do this:
+Do this: <!--more-->
 
 ```
 ---
@@ -39,3 +45,5 @@ The key takeaways:
 * The container's metadata (i.e. the stuff you get from `docker output</code> are exposed as Ansible facts, which are captured by registering the play first. <code>container_output.ansible_facts.docker_container.Output</code> captures the fact that contains our <code>stdout`.
 
 Enjoy!
+
+{{< about_me >}}

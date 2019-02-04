@@ -6,6 +6,7 @@ theme = "{{ path.Base (.Env.HUGO_THEME_REPO_URL)  }}"
 enableInlineShortcodes = true
 enableRobotsTXT = true
 canonifyURLs = true
+googleAnalytics = "{{ .Env.HUGO_GOOGLEANALYTICS }}"
 {{ if (file.Exists "global_keywords") -}}
 {{- end }}
 [params]

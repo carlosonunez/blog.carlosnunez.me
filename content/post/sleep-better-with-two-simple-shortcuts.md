@@ -21,7 +21,7 @@ Exposing ourselves to bright screens at night while checking our Facebook feed o
 
 Additionally, [other research](http://www.bristolite.com/blog/artificial-light-and-vision-can-artificial-lighting-damage-your-eyesight/ "") has shown that prolonged exposure to artificial light (like those in most offices or our phones) can, over time, damage our eyes' ability to adjust to incoming light and weaken their sensitivity to it.
 
-I didn't notice any of this until a Slashdot post introduced me to [Flux](https://justgetflux.com "") several years ago. Before using this application, I was usually tired and sore (I rode my bike much more often back then) most of the time, but didn't think much of it. I went out often back then, and most of the people I came across were just as or more tired than I was, so I thought I was fine.
+I didn't notice any of this until a Slashdot post introduced me to [Flux](https://justgetflux.com "") several years ago. Before using this application, I was usually tired and sore (I rode my bike much more often back then) most of the time, but didn't think much of it. I went out often back then, and most of the people I came across were just as or more tired than I was, so I thought I was fine.<!--more-->
 
 I would have never thought that simply *cutting blue light* at night would have improved my sleeping patterns as much as they did. I was honestly surprised and, since then, intrigued about doing everything I could to improve my sleeping habits.
 

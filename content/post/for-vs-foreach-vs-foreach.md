@@ -33,7 +33,7 @@ $arr | foreach { $arr2 += $_ + 1 }
 
 Just like those [Farmers Insurance commercials](https://www.youtube.com/watch?v=s-Lu40LRBDU "") demonstrate, **they are not the same.** It’s not as critical of an error as, say, mixing up `Write-Output` with `Write-Host` (which I’ll explain in another post), but knowing the difference between the two might help your scripts perform better and give you more flexibility in how you do certain things within them.
 
-You’ll also get some neat street cred. You can never get enough street cred.
+You’ll also get some neat street cred. You can never get enough street cred.<!--more-->
 
 ## **`for` is a keyword. `foreach` is an alias...until it's not.**
 

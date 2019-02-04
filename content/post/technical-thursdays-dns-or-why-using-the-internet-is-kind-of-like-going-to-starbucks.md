@@ -16,7 +16,7 @@ I go to Starbucks at least once a day. Given that Google has more coffee machine
 
 Wait, that's just me?
 
-Okay. I can live with that.
+Okay. I can live with that. <!--more-->
 
 Anyway, what I find fascinating about Starbucks aside from their many variants of non-coffee coffee drinks (that are so good but *so bad*) is how baristas communicate drinks to each other. Somehow, someway, your order for a tall caramel-flavored latte with soy milk, whip cream and a double-shot of espresso is always a *tall caramel whip redeye latte* to *every Starbucks barista on the planet*, but trying that on a barista at Cafe Grumpy will usually get you banned for life.
 

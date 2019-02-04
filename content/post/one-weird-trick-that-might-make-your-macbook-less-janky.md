@@ -13,7 +13,7 @@ I was trying to put a bunch of slides together today but had a lot of trouble do
 
 In search of *anything* that might improve the state of things, I stumbled upon this interesting solution that seems to have made the slowness go away!
 
-If your Mac is freezing up or acting slow in general, give this a try:
+If your Mac is freezing up or acting slow in general, give this a try:<!--more-->
 
 1. Open a Terminal by holding Command (⌘) and Space, typing "Terminal" then hitting Enter.
 
@@ -25,4 +25,4 @@ If your Mac is freezing up or acting slow in general, give this a try:
 
 Try it and let me know what you think!
 
-{{< about_me >>}
+{{< about_me >}}

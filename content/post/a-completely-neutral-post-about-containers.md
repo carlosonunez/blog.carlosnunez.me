@@ -23,7 +23,7 @@ keywords:
 
 This short post will not be any of those.
 
-I believe in using the right tool for the job and I hate fads. I've also been learning about containers for the last few months and am becoming incredibly interested in figuring out how to bring them to Windows 2012 and below (Windows Server 2016+ will have them, but Microsoft will be lucky and *probably* scared if they saw anything above 20-30% uptake within its first two years), so here's a short post describing what I've learned about them, how they work, and why they might or might not be useful for you and/or your business.
+I believe in using the right tool for the job and I hate fads. I've also been learning about containers for the last few months and am becoming incredibly interested in figuring out how to bring them to Windows 2012 and below (Windows Server 2016+ will have them, but Microsoft will be lucky and *probably* scared if they saw anything above 20-30% uptake within its first two years), so here's a short post describing what I've learned about them, how they work, and why they might or might not be useful for you and/or your business.<!--more-->
 
 # Here's A Scenario
 

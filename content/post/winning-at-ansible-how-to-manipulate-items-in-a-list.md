@@ -16,7 +16,7 @@ keywords:
 
 [Ansible](http://www.ansible.com "") is a great configuration management platform with a very, very extensible language for expressing yoru infrastructure as code. It works really well for common workflows (deploying files, adding `authorized_keys`, creating new EC2 instances, etc), but its limitations become readily apparent as you begin embarking in more custom and complex plays.
 
-Here's a quick example. Let's say you have a playbook that uses a variable (or `var` in Ansible-speak) that contains a list of tables, like this:
+Here's a quick example. Let's say you have a playbook that uses a variable (or `var` in Ansible-speak) that contains a list of tables, like this:<!--more-->
 
 ```
 important_files:

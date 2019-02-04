@@ -19,7 +19,7 @@ In Powershell, a typical, run-of-the-mill pipeline looks something like this:
 Get-ChlidItem ~ | ?{$_.LastWriteTime -lt $(Get-Date 1/1/2015)} | Format-List -Auto
 ```
 
-but really looks like this when written in .NET (C# in this example):
+but really looks like this when written in .NET (C# in this example): <!--more-->
 
 ```
 Powershell powershellInstance = new Powershell()

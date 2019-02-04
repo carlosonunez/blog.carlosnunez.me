@@ -22,7 +22,7 @@ du -h / | sort -nr
 
 and delete folders or files from folders at the top that look like they want to be deleted.
 
-Windows admins haven’t been so lucky…at least those that wanted to do it on the command-line (which is becoming increasingly important as Microsoft focuses more on promoting Windows Server Core and PowerShell). `
+Windows admins haven’t been so lucky…at least those that wanted to do it on the command-line (which is becoming increasingly important as Microsoft focuses more on promoting Windows Server Core and PowerShell). ` <!--more-->
 
 `dir` sort-of works, but it only prints sizes on files, not directories. This gets tiring really fast, since many big files are system files, and you don’t want to be *that guy* that deletes everything in `C:\windows\system32\winsxs` again.
 

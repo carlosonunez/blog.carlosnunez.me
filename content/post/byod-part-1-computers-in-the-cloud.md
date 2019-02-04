@@ -29,9 +29,9 @@ I’ll spend the next three posts talking about three key components of most BYO
 2. Laptops and desktops, and
 3. Mobile phones and tablets
 
-I’ll explain who the major players involved with each component are, their importance in BYOD and some things to watch out for during considerations.
+I’ll explain who the major players involved with each component are, their importance in BYOD and some things to watch out for during considerations.<!--more-->
 
-WIth that, let’s start by talking about computers in the cloud.
+With that, let’s start by talking about computers in the cloud.
 
 # Computing. Computing Everywhere.
 

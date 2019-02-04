@@ -2,7 +2,7 @@
 title: "A Few Gotchas About Going Multi-Cloud with AWS, Microsoft Azure and HashiCorp tools."
 date: "2017-11-21 00:53:14"
 slug: "a-few-gotchas-about-going-multi-cloud-with-aws-microsoft-azure-and-hashicorp-tools"
-image: "static/images/a-few-gotchas-about-going-multi-cloud-with-aws-microsoft-azure-and-hashicorp-tools/header.jpg"
+image: "images/a-few-gotchas-about-going-multi-cloud-with-aws-microsoft-azure-and-hashicorp-tools/header.jpg"
 description: >-
   Every CIO in the enterprise is gung-ho for multicloud.
   But is going multicloud a trap in disguise?
@@ -16,7 +16,7 @@ keywords:
 
 One of the more interesting types of work we do at [Contino](https://contino.io) is help our clients make sense of the differences between AWS and Microsoft Azure. While the HashiCorp toolchain (Packer, Terraform, Vault, Vagrant, Consul and Nomad) have made provisioning infrastructure a breeze compared to writing hundreds of lines of Python, they almost make achieving a multi-cloud infrastructure deployment seem *too* easy.
 
-This post will outline some of the differences I've observed with using these tools against both cloud platforms. As well, since I used the word "multi-cloud" in my first paragraph, I'll briefly discuss some general talking points on "things to consider" before embarking on a multi-cloud journey at the end.
+This post will outline some of the differences I've observed with using these tools against both cloud platforms. As well, since I used the word "multi-cloud" in my first paragraph, I'll briefly discuss some general talking points on "things to consider" before embarking on a multi-cloud journey at the end.<!--more-->
 
 # Azure and ARM Are Inseparable
 

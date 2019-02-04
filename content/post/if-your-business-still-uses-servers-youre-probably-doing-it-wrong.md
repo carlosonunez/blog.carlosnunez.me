@@ -21,7 +21,7 @@ Many businesses small and large buy servers for many wrong reasons. Some busines
 All of these reasons are wrong. There are only three reasons that I can think of that justify the purchase of physical servers (feel free to list more in the comments!):
 1. A regulator your business is beholden to requires it,
 2. Your app really does need that kind of performance (read on to find out if this is you), and
-3. You have a strong passion for burning money.
+3. You have a strong passion for burning money. <!--more-->
 
 ![[]](https://media.licdn.com/mpr/mpr/AAEAAQAAAAAAAAUiAAAAJDE1MjQxZTdmLWVhZmQtNDg0OS1iYTFmLTJhMzFmMDU1ZjhhNA.jpg "")
 You see, when you buy servers from Dell or the like, you’re not *just* buying servers. Servers come with a ton of overhead that’s hard to see coming if you don’t buy them often enough:

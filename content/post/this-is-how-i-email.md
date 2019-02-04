@@ -18,7 +18,7 @@ already. If that’s the case, feel free to tell me off!
 Finally, if you don’t want to worry about any of this stuff and don’t ever see yourself having to use Outlook or Mail.app ever again, try [Google’s
 Inbox](http://inbox.google.com "") and tell me that all of this is useless in the comments!
 
-Without further ado, this is how I email:
+Without further ado, this is how I email:<!--more-->
 
 * **I use folders to categorize my mail.** I used to abuse folder structures by having folders for particular events, purchases, conversations, etc, but I’ve found that it hasn’t provided me with a lot of value and was really difficult to re-assemble after email migrations, so I now keep a minimal top-level directory structure instead. The folders that I use most often are:
 * **Services/{Added, Removed}**: For keeping track of new and deleted accounts I make (and I make a lot)

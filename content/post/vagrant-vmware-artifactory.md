@@ -21,7 +21,7 @@ I wrote a small `Vagrantfile` and helper library for provisioning VMware VMs fro
 
 Here it is: https://github.com/carlosonunez/vagrant_vmware_artifactory_example
 
-Tests are to be added soon! I'm thinking Cucumber integration tests with unit tests on the helper methods and Vagrantfile correctness.
+Tests are to be added soon! I'm thinking Cucumber integration tests with unit tests on the helper methods and Vagrantfile correctness.<!--more-->
 
 I also tried to emphasize small, isolated and easily readable methods with short call chains and zero side effects.
 

@@ -14,7 +14,7 @@ I was discussing the power of Goroutines a few days ago with a fellow co-worker.
 > *You know nothing! Goroutines don't fork threads!*
 
 This sounded ludicrous to me. I (mistakenly) thought that concurrency == parallelism because doing things "concurrently" usually means doing them at the same time simultaneously, i.e. what is typically described as being run in parallel.
-Nobody ever says "I made a grilled cheese sandwich in parallel to waiting for x." So I argued how concurrency is all about multithreading while he argued that concurrency is all about context switching. This small, but friendly, argument invited a few co-workers surrounding us, and much ado about event pumps were made.
+Nobody ever says "I made a grilled cheese sandwich in parallel to waiting for x." So I argued how concurrency is all about multithreading while he argued that concurrency is all about context switching. This small, but friendly, argument invited a few co-workers surrounding us, and much ado about event pumps were made.<!--more-->
 
 After a few minutes of me being proven deeply wrong, one of our nearby coworkers mentioned this tidbit of knowledge:
 
