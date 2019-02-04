@@ -1,6 +1,5 @@
 baseurl = "http://localhost"
 title = "neurons firing from a keyboard"
-author = "Carlos Nunez"
 paginate = "15"
 theme = "arabica"
 enableInlineShortcodes = true
@@ -14,6 +13,7 @@ googleAnalytics = "foo"
   dateFormatUse = "2018-01-01"
   twitter = "easiestnameever"
   linkedin = "carlosindfw"
+  author = "Carlos Nunez"
 [menu]
   [[ menu.main ]]
     identifier = "about-me"
