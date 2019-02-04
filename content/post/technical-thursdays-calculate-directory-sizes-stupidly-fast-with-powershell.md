@@ -2,6 +2,12 @@
 title: "Technical Thursdays: Calculate Directory Sizes Stupidly Fast With PowerShell."
 date: "2015-08-14 00:03:40"
 slug: "technical-thursdays-calculate-directory-sizes-stupidly-fast-with-powershell"
+description: Calculate directory sizes with ease in PowerShell with this post.
+keywords:
+  - powershell
+  - windows
+  - microsoft
+  - coding
 ---
 
 # Scenario
@@ -10,19 +16,19 @@ A file share that a group in your business is dependent on is running out of spa
 
 This has been really easy for Linux admins for a long time now: Do this
 
-[code lang=text]
+```
 du -h / | sort -nr
-[/code]
+```
 
 and delete folders or files from folders at the top that look like they want to be deleted.
 
 Windows admins haven’t been so lucky…at least those that wanted to do it on the command-line (which is becoming increasingly important as Microsoft focuses more on promoting Windows Server Core and PowerShell). `
 
-<code>dir</code> sort-of works, but it only prints sizes on files, not directories. This gets tiring really fast, since many big files are system files, and you don’t want to be *that guy* that deletes everything in <code>C:\windows\system32\winsxs</code> again.
+`dir` sort-of works, but it only prints sizes on files, not directories. This gets tiring really fast, since many big files are system files, and you don’t want to be *that guy* that deletes everything in `C:\windows\system32\winsxs` again.
 
 Doing it in PowerShell is a lot better in this regard (as written by Ed Wilson from [The Scripting Guys](http://blogs.technet.com/b/heyscriptingguy/archive/2012/05/25/getting-directory-sizes-in-powershell.aspx ""))
 
-[code lang=text]
+```
 function Get-DirectorySize ($directory) {
 Get-ChildItem $directory -Recurse | Measure-Object -Sum Length | Select-Object `
     @{Name=&quot;Path&quot;; Expression={$directory.FullName}},
@@ -30,11 +36,11 @@ Get-ChildItem $directory -Recurse | Measure-Object -Sum Length | Select-Object `
     @{Name=&quot;Size&quot;; Expression={$_.Sum}}
 }
 
-[/code]
+```
 
-This code works really well in getting you a folder report..until you try it on a folder like, say, <code>C:\Windows\System32</code>, where you have lots and lots of little files that PowerShell needs to (a) measure, (b) wait for .NET to marshal the <code>Win32.File</code> system object into an <code>System.IO.FIle</code> object, then (c) wrap into the fancy <code>PSObject</code> we know and love.
+This code works really well in getting you a folder report..until you try it on a folder like, say, `C:\Windows\System32`, where you have lots and lots of little files that PowerShell needs to (a) measure, (b) wait for .NET to marshal the `Win32.File` system object into an `System.IO.FIle` object, then (c) wrap into the fancy `PSObject` we know and love.
 
-This is exacerbated further upon running this against a remote SMB or CIFS file share, which is the more likely scenario these days. In this case, Windows needs to make a SMB call to tell the endpoint on which the file share is hosted to measure the size of the directories you’re looking to report on. With CMD, once WIndows gets this information back, CMD pretty much dumps the result onto the console and goes away. .NET, unfortunately, has to create <code>System.IO.File</code> objects for every single file in that remote directory, and in order to do that, it needs to retrieve extended file information.
+This is exacerbated further upon running this against a remote SMB or CIFS file share, which is the more likely scenario these days. In this case, Windows needs to make a SMB call to tell the endpoint on which the file share is hosted to measure the size of the directories you’re looking to report on. With CMD, once WIndows gets this information back, CMD pretty much dumps the result onto the console and goes away. .NET, unfortunately, has to create `System.IO.File` objects for every single file in that remote directory, and in order to do that, it needs to retrieve extended file information.
 
 By default, it does this for *every single file*. This isn’t a huge overhead when the share is on the same network or a network with a low-latency/high-bandwidth path. This is a **huge** problem when this is not the case. (I discovered this early in my career when I needed to calculate folder sizes on shares in Sydney from New York. Australia’s internet is slow and generally awful. I was not a happy man that day.)
 
@@ -44,9 +50,9 @@ This post will show you some optimizations that you can try that might improve t
 
 # Our First Trick: Use CMD
 
-One common way of sidestepping this issue is by using a hidden <code>cmd</code> window running <code>dir /s /b</code> and doing some light string parsing like this:
+One common way of sidestepping this issue is by using a hidden `cmd` window running `dir /s /b` and doing some light string parsing like this:
 
-[code lang=text]
+```
 function Get-DirectorySizeWithCmd {
     param (
         [Parameter(Mandatory=$true)]
@@ -90,20 +96,20 @@ function Get-DirectorySizeWithCmd {
     }
 
 }
-[/code]
+```
 
 It’s not true Powershell, but it might save you a lot of time over high-latency connections. (It is usually slower on local or nearby storage.
 
 # Our Second Trick: Use Robocopy
 
-Most Windows sysadmins know about the usefulness of <code>robocopy</code> during file migrations. What you might **not** know is how good it is at sizing directories. Unlike <code>dir</code>, <code>robocopy /l /nfl /ndl</code>:
+Most Windows sysadmins know about the usefulness of `robocopy` during file migrations. What you might **not** know is how good it is at sizing directories. Unlike `dir`, `robocopy /l /nfl /ndl`:
 
 1. It won’t list every file or directory it finds in its path, and
 2. It provides a little more control over the output, which makes it easier for you to parse when the output makes it way to your Powershell session.
 
 Here’s some sample code that demonstrates this approach:
 
-[code lang=text]
+```
 function Get-DirectorySizeWithRobocopy {
     param (
         [Parameter(Mandatory=$true)]
@@ -124,13 +130,13 @@ function Get-DirectorySizeWithRobocopy {
     }
 }
 
-[/code]
+```
 
 # The Target
 
 For this post, we’ll be using a local directory with ~10,000 files that were about 1 to 10k in length (the cluster size on the server I used is ~8k, so they’re really about 8-80k in size) and spread out across 200 directories. The code written below will generate this for you:
 
-[code lang=text]
+```
 $maxNumberOfDirectories = 20
 
 $maxNumberOfFiles = 10
@@ -149,7 +155,7 @@ for ($i=0; $i -lt $maxNumberOfDirectories; $i++) {
 
 }
 }
-[/code]
+```
 
 I used values of 1000 and 10000 for $maxNumberOfFiles while keeping the number of directories at 20.
 
@@ -170,11 +176,11 @@ Get-DIrectorySizeWithRobocopy
 ~45ms
 ~85ms
 
-I was actually really surprised to see how performant <code>robocopy</code> was. I believe that <code>cmd</code> would be just as performant if not more so if it didn’t have to do as much printing to the console as it does.
+I was actually really surprised to see how performant `robocopy` was. I believe that `cmd` would be just as performant if not more so if it didn’t have to do as much printing to the console as it does.
 
 # /MT isn’t a panacea
 
-The /MT switch tells robocopy to split off the copy job given amongst several child <code>robocopy</code> instances. One would think that this would speed things up, since the only thing faster than <code>robocopy</code> is more <code>robocopy.</code> It turns out that this was actually NOT the case, as its times ballooned up to around what we saw with <code>cmd.</code> I presume that this has something to do with the way that those jobs are being pooled, or that each process is actually logging to their own stdout buffers.
+The /MT switch tells robocopy to split off the copy job given amongst several child `robocopy` instances. One would think that this would speed things up, since the only thing faster than `robocopy` is more `robocopy.` It turns out that this was actually NOT the case, as its times ballooned up to around what we saw with `cmd.` I presume that this has something to do with the way that those jobs are being pooled, or that each process is actually logging to their own stdout buffers.
 
 TL;DR: Don’t use it.
 
@@ -182,7 +188,7 @@ TL;DR: Don’t use it.
 
 PowerShell Jobs seem like a lucrative option. Jobs make it very easy to run several pieces of code concurrently. For long-running scriptblocks, Jobs are actually an awesome approach.
 
-Unfortunately, Jobs will work against you for a problem like this. Every Powershell Job invokes a new Powershell session with their own Powershell processes. Each runspace within that session will use *at least* 20MB of memory, and that’s without modules! Additionally, you’ll need to invoke every Job serially, which means that the time spent in just *starting* each job could very well exceed the amount of time it takes robocopy to compute your directory sizes. Finally, if you use <code>cmd</code> or <code>robocopy</code> to compute your directory sizes, every job will invoke their own copies of <code>cmd</code> and <code>robocopy</code>, which will further increase your memory usage for, potentially, very little benefit.
+Unfortunately, Jobs will work against you for a problem like this. Every Powershell Job invokes a new Powershell session with their own Powershell processes. Each runspace within that session will use *at least* 20MB of memory, and that’s without modules! Additionally, you’ll need to invoke every Job serially, which means that the time spent in just *starting* each job could very well exceed the amount of time it takes robocopy to compute your directory sizes. Finally, if you use `cmd` or `robocopy` to compute your directory sizes, every job will invoke their own copies of `cmd` and `robocopy`, which will further increase your memory usage for, potentially, very little benefit.
 
 TL;DR: Don’t use Jobs either.
 
@@ -190,6 +196,4 @@ That’s all I’ve got! I hope this helps!
 
 *Do you have another solution that works? Has this helped you size directories a lot faster than before? Let’s talk about it in the comments!*
 
-# About Me
-
-I'm the founder of caranna.works, an IT engineering firm in Brooklyn that builds smarter and cost-effective IT solutions that help new and growing companies grow fast. Sign up for your free consultation to find out how. http://caranna.works.
+{{< about_me >}}

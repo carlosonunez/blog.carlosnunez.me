@@ -2,6 +2,10 @@
 title: "Technical Thursdays: DNS, or why using the Internet is kind of like going to Starbucks"
 date: "2015-08-21 17:51:38"
 slug: "technical-thursdays-dns-or-why-using-the-internet-is-kind-of-like-going-to-starbucks"
+description: "A coffee-fueled introduction to the domain name system."
+keywords:
+  - dns
+  - starbucks
 ---
 
 This Thursday, we'll talk about a system that has been extremely critical (and extremely taken for granted) for shaping the Internet as we know it: the domain name system, or DNS for short.
@@ -97,3 +101,5 @@ While this is often a very good thing, this often causes problems when records c
 This is starting to get long and I’m in the mood for a caramel frap now, so I’m going to stop while I’m ahead here!
 
 *Did you learn something today? Did I miss something? Let me know in the comments!*
+
+{{< about_me >}}

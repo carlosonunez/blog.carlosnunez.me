@@ -2,6 +2,9 @@
 title: "Doing something boring? Try this one weird trick! Slackers hate it!"
 date: "2015-09-15 19:08:11"
 slug: "doing-something-boring-try-this-one-weird-trick-slackers-hate-it"
+description: >-
+  This post talks about how to segment your time to keep task on
+  boring stuff.
 ---
 
 I love writing code and building awesome stuff, but there are times where fighting the urge to Reddit for 14 hours feels like this:
@@ -30,6 +33,4 @@ Except it does! And for three reasons:
 
 Try it for a week. Let me know how it goes!
 
-## About Me.
-
-I’m the founder of caranna.works, an IT engineering firm in Brooklyn that builds smarter and cost-effective IT solutions that help new and growing companies grow fast. Sign up for your free consultation to find out how.[http://caranna.works](http://caranna.works/ "").
+{{< about_me >}}

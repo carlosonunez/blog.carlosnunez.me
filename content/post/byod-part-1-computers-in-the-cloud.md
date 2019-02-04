@@ -2,6 +2,19 @@
 title: "BYOD Part 1: Computers In The Cloud"
 date: "2015-09-04 13:28:22"
 slug: "byod-part-1-computers-in-the-cloud"
+description: >-
+  Can you combine the power of the cloud with the flexibility of VDI?
+  Yes, you can!
+  This post makes the case for VDI in the cloud and why companies should
+  consider it.
+keywords:
+  - vdi
+  - cloud
+  - amazon-web-services
+  - aws
+  - aws-workspaces
+  - ec2
+  - aws-ec2
 ---
 
 Computing is expensive. Desktops and laptops cost lots of money. Printers cost even more money. (Printers are really funny, actually; buying one or two isn’t so bad, but once you’re managing tens or hundreds or more laser printers and printing hundreds or thousands of pages per day, the cost of toner/ink and repair skyrocket like a SpaceX shuttle.) Desks cost even *more* money. Accessories cost even *more* money. The list goes on and on,*infinitum ad nauseum*.

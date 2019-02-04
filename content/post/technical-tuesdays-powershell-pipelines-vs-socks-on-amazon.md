@@ -2,11 +2,22 @@
 title: "Technical Tuesdays: Powershell Pipelines vs Socks on Amazon"
 date: "2015-08-05 04:50:53"
 slug: "technical-tuesdays-powershell-pipelines-vs-socks-on-amazon"
+description: >-
+  Confused about Powershell pipelines? Love buying socks on Amazon?
+  This post is for you!
+keywords:
+  - amazon
+  - powershell
+  - windows
+  - microsoft
+  - automation
 ---
 
 In Powershell, a typical, run-of-the-mill pipeline looks something like this:
 
-`Get-ChlidItem ~ | ?{$_.LastWriteTime -lt $(Get-Date 1/1/2015)} | Format-List -Auto`
+```
+Get-ChlidItem ~ | ?{$_.LastWriteTime -lt $(Get-Date 1/1/2015)} | Format-List -Auto
+```
 
 but really looks like this when written in .NET (C# in this example):
 
@@ -80,6 +91,4 @@ And that's how Microsoft put the power of Amazon on your desktop!
 
 *Has the Powershell pipeline ever saved your life? Have you ever had to roll your own runspaces and lived to talk about it? (Did you know you can use runspaces to make multithreaded Powershell scripts? Not saying that *you would*...) Let's talk about it in the comments below!*
 
-**About Me**
-
-*I'm the founder of caranna.works, an IT engineering firm in Brooklyn, NY that employs time-tested and proven solutions that help companies save lots of money on their IT costs. Sign up for your free consultation to find out how. http://caranna.works.*
+{{< about_me >}}

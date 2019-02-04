@@ -4,6 +4,12 @@ date: "2016-12-12 18:05:37"
 slug: "wiring-up-docker-on-windows-to-ubuntu-on-windows"
 description: "Having trouble getting Docker working in your Bash for Windows session? This post might help."
 image: "/images/wiring-up-docker-on-windows-to-ubuntu-on-windows/header.png"
+keywords:
+  - microsoft
+  - windows
+  - linux
+  - wsl
+  - lxss
 ---
 
 Getting docker running on Ubuntu on Windows is pretty simple. After [installing the Docker Windows engine](https://docs.docker.com/engine/getstarted/step_one/ "") and restarting, run this in a <code>bash</code> session to bind the two together:

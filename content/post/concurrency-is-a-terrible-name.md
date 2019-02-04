@@ -2,18 +2,23 @@
 title: "Concurrency is a terrible name."
 date: "2015-11-28 19:12:45"
 slug: "concurrency-is-a-terrible-name"
+description: "Concurrency and parallelism are easy to confuse."
+keywords:
+  - computer-science
+  - threading
+  - parallelism
 ---
 
-I was discussing the power of Goroutines a few days ago with a fellow co-worker. Naturally, the topic of "doing things at the same time in fancy ways" came up. In code, this is usually expressed by the <code>async</code> or <code>await</code> keywords depending on your language of choice. I told him that I really liked how Goroutines abstracts much of the grunt work in sharing state across multiple threads. As nicely as he possibly could, he responded with:
+I was discussing the power of Goroutines a few days ago with a fellow co-worker. Naturally, the topic of "doing things at the same time in fancy ways" came up. In code, this is usually expressed by the `async` or `await` keywords depending on your language of choice. I told him that I really liked how Goroutines abstracts much of the grunt work in sharing state across multiple threads. As nicely as he possibly could, he responded with:
 
-<blockquote>*You know nothing! Goroutines don't fork threads!*</blockquote>
+> *You know nothing! Goroutines don't fork threads!*
 
 This sounded ludicrous to me. I (mistakenly) thought that concurrency == parallelism because doing things "concurrently" usually means doing them at the same time simultaneously, i.e. what is typically described as being run in parallel.
 Nobody ever says "I made a grilled cheese sandwich in parallel to waiting for x." So I argued how concurrency is all about multithreading while he argued that concurrency is all about context switching. This small, but friendly, argument invited a few co-workers surrounding us, and much ado about event pumps were made.
 
 After a few minutes of me being proven deeply wrong, one of our nearby coworkers mentioned this tidbit of knowledge:
 
-<blockquote>*Concurrency is a terrible name for this.*</blockquote>
+> *Concurrency is a terrible name for this.*
 
 I couldn't agree more, and my small post will talk about why.
 
@@ -35,6 +40,4 @@ To make matters more confusing, these days, [operating systems will often automa
 
 Concurrency and parallelism aren't the same, except when they are. Sort of.
 
-## *About Me*
-
-*Carlos Nunez is a site reliability engineer for [Namely](http://www.namely.com ""), a human capital management and payroll solution made for humans. He loves bikes, brews and all things Windows DevOps and occasionally helps companies plan and execute their technology strategies.*
+{{< about_me >}}

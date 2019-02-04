@@ -2,6 +2,14 @@
 title: "Start small; move fast"
 date: "2016-10-14 01:04:29"
 slug: "start-small-move-fast"
+description: >-
+  Many teams are eager to get to a better, future goal as fast as they can.
+  This post explains how slowing down can, surprisingly, product results in a
+  faster, safer and more fun way.
+keywords:
+  - productivity
+  - teams
+  - culture
 ---
 
 *Seinfeld* wasn't always the heavily-syndicated network cash cow it is today. The hit show started as an experiment for Jerry and Larry David. They wanted to write a show to describe the life of a comedian in New York, namely, Jerry's. Despite Jerry's limited acting and writing experience, they wrote their pilot in the late 1980's and sold it as "The Jerry Chronicles," which NBC made its first national appearance of on July 1989.
@@ -31,8 +39,4 @@ What I am saying, however, is to do something like what Jerry Seinfeld did: star
 
 Finding a pain point, acting on it in a smart way and failing fast are the principal tenets of doing things the "lean" way, and you don't even need to create your own LLC to do it! In fact, to me, this is what DevOps is really about: using technology in smart ways to get business done by getting everyone on the same page.
 
-# About Me
-
-Carlos Nunez is a DevOps consultant for ThoughtWorks, a software company striving for engineering excellence and a better world for our next generation of thinkers and leaders. He loves everything DevOps, Windows, and Powershell, along with a bit of burgers, beer and plenty of travel.
-
-Follow him on Twitter! [@easiestnameever.](https://twitter.com/easiestnameever "")
+{{< about_me >}}

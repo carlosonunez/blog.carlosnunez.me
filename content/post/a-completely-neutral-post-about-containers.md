@@ -3,6 +3,16 @@ title: "A completely neutral post about containers."
 date: "2015-11-30 20:36:01"
 slug: "a-completely-neutral-post-about-containers"
 image: "/images/a-completely-neutral-post-about-containers/a-completely-neutral-header.jpg"
+description: >-
+  Containers are an exciting technology, but there are many misconceptions about
+  them. This post aims to explain containers and Docker in more detail and
+  provide some examples on when they might prove useful.
+keywords:
+  - docker
+  - containers
+  - lxc
+  - linux
+  - containerization
 ---
 
 * **Edit 2**: I've made a few small changes to the way I've described Docker architecture. Thanks, [/u/jmtd](https://www.reddit.com/r/sysadmin/comments/3uxwwn/i_wrote_a_intro_post_for_containers_and_docker/cxj3oqd0 "")!
@@ -31,7 +41,7 @@ This is pretty straightforward for some (many?) teams, but much easier said than
 * **Patching is...patching**: Patching operating systems can take a long time and introduce unforeseen regressions that might not be part of your spot test(s).
 * **Golden images get complicated**: Maintaining images gets increasingly complicated fast, especially as your site gains more moving parts.
 * **Money**: Most "enterprise-" grade virtualization or cloud platforms cost money, and more instances = more compute, networking and storage = more 💰💰.
-* **Overhead**: Instead of worrying about whether your new shopping cart feature works, you have to worry about whether things like whether <code>/etc/networks</code> is set up right or whether your host has the right Windows license applied to it.
+* **Overhead**: Instead of worrying about whether your new shopping cart feature works, you have to worry about whether things like whether `/etc/networks` is set up right or whether your host has the right Windows license applied to it.
 
 What was originally an "easy" feature test has now become this monolith of an environment fraught with overhead that you'd rather not deal with. This is one of the many reasons why testing isn't given the due diligence that it often needs.
 
@@ -54,7 +64,7 @@ With containers, you can do things like:
 
   Despite the recent press (and VC-backed funding) that Docker (and, in turn, containers) have been getting, containers are far from a new concept.
 
-  The earliest, and most common, form of containers were <code>chroot</code>s and/or BSD jails. These first appeared in [Version 7 UNIX and 4.2BSD](https://en.wikipedia.org/wiki/Chroot "") in 1979 and 1982 by way of the <code>chroot</code> syscall and binary and has been used on a daily basis since to restrict the scope of access that users have on UNIX-based systems when they log in. When a user logs into a <code>chroot</code> jail, they will appear to have root access to the entire system (and might even be able to write to anything within the root partition) but, in actuality, will only have access to a volume or directory within the actual system it lives under. This gives the user the ability to do whatever they want on a system without actually destroying anything important within it.
+  The earliest, and most common, form of containers were `chroot`s and/or BSD jails. These first appeared in [Version 7 UNIX and 4.2BSD](https://en.wikipedia.org/wiki/Chroot "") in 1979 and 1982 by way of the `chroot` syscall and binary and has been used on a daily basis since to restrict the scope of access that users have on UNIX-based systems when they log in. When a user logs into a `chroot` jail, they will appear to have root access to the entire system (and might even be able to write to anything within the root partition) but, in actuality, will only have access to a volume or directory within the actual system it lives under. This gives the user the ability to do whatever they want on a system without actually destroying anything important within it.
 
   Additionally, hosting providers have been providing virtual private servers since well before AWS was a thing. These VPSes were either virtual machines or chroots depending on the type system requested. Google has also been using (and are still using!) containers internally for executing, maintaining and easily failing over ad-hoc jobs and services since ~2006. They recently made parts of their implementation (called "Borg") public; check out the [research paper](http://research.google.com/pubs/pub43438.html "") if you're interested. (Googlers take advantage of Borg all of the time for nearly anything and all of their production services run on it. It's unbelievably reliable and ridiculously high-scale.)
 
@@ -66,8 +76,8 @@ With containers, you can do things like:
 
   What Docker excels in that lxc sort-of doesn't is in ease-of-use. Docker's guiding philosophy is that its containers should be used to do a single thing and a single thing only and that containers should be able to run on any host, anywhere. This allows Docker containers to be extremely lightweight and its underlying architecture comparatively simple. This manifests itself in several ways:
 
-  * Every container is composed of a read-only base *image* that defines its base and additional writable images that overlay it. The base image is kind-of like a classic operating system golden image with the big difference being in it lacking an operating system. Typically, the additional images that overlay it are built using *Dockerfiles*, but they can also be built via the <code>docker</code> binary.
-  * Images are stored in an image registry called the [Docker Hub](https://hub.docker.com/ "") where they can be downloaded from anywhere and versioned to make rollbacks easy. Committing to and pulling from Docker Hub is built into the <code>docker</code> binary. Images can also be stored in private hubs if needed.
+  * Every container is composed of a read-only base *image* that defines its base and additional writable images that overlay it. The base image is kind-of like a classic operating system golden image with the big difference being in it lacking an operating system. Typically, the additional images that overlay it are built using *Dockerfiles*, but they can also be built via the `docker` binary.
+  * Images are stored in an image registry called the [Docker Hub](https://hub.docker.com/ "") where they can be downloaded from anywhere and versioned to make rollbacks easy. Committing to and pulling from Docker Hub is built into the `docker` binary. Images can also be stored in private hubs if needed.
 
   * Docker also includes a [RESTful API](https://docs.docker.com/engine/reference/api/docker_remote_api/ "") that makes it very easy to build tooling around.
 
@@ -100,7 +110,7 @@ With containers, you can do things like:
   * Install Docker (and Boot2Docker if needed) onto their system.
   * Create Dockerfiles describing the containers needed to re-build a local instance of production or [create images](https://docs.docker.com/engine/articles/baseimages/ "") if needed
   * Define your environment using [Docker Compose](https://docs.docker.com/compose/ "")
-  * <code>docker-compose up</code>
+  * `docker-compose up`
 
   That's mostly it! All of this can be done on localhost, and all of it is (relatively) easy.
 

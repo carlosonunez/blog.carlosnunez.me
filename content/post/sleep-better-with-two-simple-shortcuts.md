@@ -2,14 +2,18 @@
 title: "Sleep better with two simple shortcuts."
 date: "2015-12-21 00:43:59"
 slug: "sleep-better-with-two-simple-shortcuts"
+description: "Blue light fatigue is real. Fix that with this post."
+keywords:
+  - productivity
+  - macbook
+  - health
 ---
 
 TL;DR:
 
-<blockquote>
-  Control + ⌘ + Shift + G, and
-  Home button triple-click.
-</blockquote>
+> Control + ⌘ + Shift + G
+> Home button triple-click.
+
 
 # Why?
 
@@ -44,9 +48,8 @@ If you're interested in giving this a try, here are two shortcuts you can set up
 
 After enabling it, you can easily switch between light and dark mode by hitting:
 
-<blockquote>
-  Control + Shift + ⌘ + G
-</blockquote>
+> Control + Shift + ⌘ + G
+
 
 Note that this will also invert photos and images. If that creeps you out, hit that key sequence again to go back to normal!
 
@@ -63,3 +66,5 @@ You can also enable dark mode on your iPhone! To do so:
 After doing this, you'll be able to turn on dark mode by triple-clicking your home button!
 
 I hope this helps you as much as it's helped me!
+
+{{< about_me >}}

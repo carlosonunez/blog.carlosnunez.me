@@ -3,6 +3,16 @@ title: "Getting Into DevOps."
 date: "2017-03-02 03:58:15"
 slug: "getting-into-devops"
 image: "/images/getting-into-devops/header.png"
+description: >-
+  DevOps is one of the hottest professions in tech today, and for good reason:
+  bridging the gap between tech and business is an incredibly important job!
+  However, getting into this work can seem daunting for people on the outside.
+  This post provides some suggestions on where to start.
+keywords:
+  - devops
+  - career
+  - culture
+  - jobs
 ---
 
 I've observed a sharp uptick of developers and systems administrators interested in "getting into DevOps" within the last year or so. This pattern makes sense, too: in an age where a single developer can spin up a globally-distributed infrastructure for an application with a few dollars and a few API calls, the gap between development and systems administration is closer than ever. While I've seen plenty of blog posts and articles about cool DevOps tools and thoughts to think about, I've seen fewer content on pointers and suggestions for people looking to get into this work.

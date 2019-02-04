@@ -2,6 +2,12 @@
 title: "Is it actually possible to have an empty inbox? Try this and find out!"
 date: "2015-08-24 12:48:02"
 slug: "this-is-how-i-email"
+description: >-
+  You can have an empty inbox! This post describes a folder-based strategy that
+  might help.
+keywords:
+  - organization
+  - email
 ---
 
 I’ve developed a system over the years that has kept my inbox mostly empty all of the time. It has worked for me even when I was getting 100+ emails/day, so I’d say it scales fairly well. It also works well even in the absence of Gmail’s additional feature set (I use Office 365 personally, but this worked when I used Gmail, Apple Mail and my own mail servers back in the day.), which is nice should you ever choose to use a desktop mail client.

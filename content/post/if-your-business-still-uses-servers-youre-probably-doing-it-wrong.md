@@ -2,6 +2,18 @@
 title: "If Your Business Still Uses Servers, You’re (Probably) Doing It Wrong"
 date: "2015-08-04 17:55:43"
 slug: "if-your-business-still-uses-servers-youre-probably-doing-it-wrong"
+description: >-
+  This post makes the case for using public cloud for people that are
+  gung-ho about preserving their bare metal compute.
+keywords:
+  - aws
+  - amazon
+  - google
+  - google-cloud
+  - azure
+  - microsoft
+  - cloud
+  - hardware
 ---
 
 # **Your servers are useless, and you should sell them.**
@@ -68,3 +80,5 @@ Microsoft and Google give new users $200 and $300 in credits to try their servic
 **Try Google Cloud Platform here:** [https://cloud.google.com/free-trial/index](https://cloud.google.com/free-trial/index "")
 
 *What was your physical to cloud transition story? Is there anything holding you back from trying the cloud? Leave a comment below!*
+
+{{< about_me >}}

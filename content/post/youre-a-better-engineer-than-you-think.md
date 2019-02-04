@@ -3,6 +3,9 @@ title: "You're a better engineer than you think."
 date: "2015-12-02 05:22:53"
 slug: "youre-a-better-engineer-than-you-think"
 image: "/images/youre-a-better-engineer-than-you-think/header.png"
+description: >-
+  Impostor syndrome can be all-consuming. But it doesn't have to be! You're
+  already an amazing engineer, and this post describes why.
 ---
 
 I was quite surprised to discover that thousands of people were members of the "Imposter Syndrome" Google+ group within my first month at Google.
@@ -13,7 +16,7 @@ So imagine my surprise when literally tons of engineers join a group expressing 
 
 ## I hate checklists.
 
-I can't help but feel that every other day, I come across a blog post from a programmer or engineer that I've never heard of telling me 15 nicely-edited reasons why I'm not worthy of my job. I've never used Haskell. I don't know what <code>git stack</code> does or how to untangle complicated head conflicts from rogue <code>git commit -force</code>s. My <code>.vimrc</code> is really, really plain, and I still don't know how to write an emacs plugin despite having used it intermittently for the last three years.
+I can't help but feel that every other day, I come across a blog post from a programmer or engineer that I've never heard of telling me 15 nicely-edited reasons why I'm not worthy of my job. I've never used Haskell. I don't know what `git stack` does or how to untangle complicated head conflicts from rogue `git commit -force`s. My `.vimrc` is really, really plain, and I still don't know how to write an emacs plugin despite having used it intermittently for the last three years.
 
 Hell, I think if I tell anyone at any conference that I don't watch Star Trek, don't play video games and actually love being a Windows engineer (or simply show them my relatively barren Github profile), I'll be blacklisted by every professional computing community out there.
 
@@ -31,13 +34,12 @@ Are you learning new things? Are you *trying* new things? If so, then awesome!
 
 Finding a groove and sticking with it is a comfortable place to be. However, I believe that sticking with a groove for too long is an easy way to miss things, or, worse, an easy way to think that you don't need to learn anything new.
 
-In the beginning of my career five years ago, I was really, really good at VBscript. I knew enough to write and maintain behemoth-sized code and where its (many) oddities were. I got so good at it, I thought that learning PowerShell (then Monad) was more of a pain than a benefit. Setting registry keys was (back then) so much more difficult with the <code>StdRegProv</code> provider than with using the <code>Shell</code> object and calling <code>reg.exe</code>.
+In the beginning of my career five years ago, I was really, really good at VBscript. I knew enough to write and maintain behemoth-sized code and where its (many) oddities were. I got so good at it, I thought that learning PowerShell (then Monad) was more of a pain than a benefit. Setting registry keys was (back then) so much more difficult with the `StdRegProv` provider than with using the `Shell` object and calling `reg.exe`.
 
 Had I invested the time in learning Powershell early, I would have probably invested much more time helping build the language or at least collecting cred on Stack Overflow.
 
-<blockquote>
-  If you're the smartest person in the room, you're probably in the wrong room.
-</blockquote>
+> If you're the smartest person in the room, you're probably in the wrong room.
+
 
 Are you keeping yourself challenged? Are you working around people who challenge you? Are you taking on increasingly more challenging work? If so, then you're awesome!
 

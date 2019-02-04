@@ -2,9 +2,19 @@
 title: "A Few Gotchas About Going Multi-Cloud with AWS, Microsoft Azure and HashiCorp tools."
 date: "2017-11-21 00:53:14"
 slug: "a-few-gotchas-about-going-multi-cloud-with-aws-microsoft-azure-and-hashicorp-tools"
+image: "static/images/a-few-gotchas-about-going-multi-cloud-with-aws-microsoft-azure-and-hashicorp-tools/header.jpg"
+description: >-
+  Every CIO in the enterprise is gung-ho for multicloud.
+  But is going multicloud a trap in disguise?
+  This post looks into an aspect of going multicloud whose devils are in
+  the details: infrastructure provisioning.
+keywords:
+  - multicloud
+  - terraform
+  - provisioning
 ---
 
-One of the more interesting types of work we do at [Contino](https://contino.io "") is help our clients make sense of the differences between AWS and Microsoft Azure. While the HashiCorp toolchain (Packer, Terraform, Vault, Vagrant, Consul and Nomad) have made provisioning infrastructure a breeze compared to writing hundreds of lines of Python, they almost make achieving a multi-cloud infrastructure deployment seem *too* easy.
+One of the more interesting types of work we do at [Contino](https://contino.io) is help our clients make sense of the differences between AWS and Microsoft Azure. While the HashiCorp toolchain (Packer, Terraform, Vault, Vagrant, Consul and Nomad) have made provisioning infrastructure a breeze compared to writing hundreds of lines of Python, they almost make achieving a multi-cloud infrastructure deployment seem *too* easy.
 
 This post will outline some of the differences I've observed with using these tools against both cloud platforms. As well, since I used the word "multi-cloud" in my first paragraph, I'll briefly discuss some general talking points on "things to consider" before embarking on a multi-cloud journey at the end.
 
@@ -20,171 +30,171 @@ However, instead of Terraform or Packer using the Azure Go SDK directly to creat
 
 # Azure Deployments Are Slower
 
-My experience has shown me that the Azure ARM Terraform provider and Packer builder takes slightly more time to "get going" than the AWS provider does, especially when using <code>Standard_A</code> class VMs. This can make testing code changes quite tedious.
+My experience has shown me that the Azure ARM Terraform provider and Packer builder takes slightly more time to "get going" than the AWS provider does, especially when using `Standard_A` class VMs. This can make testing code changes quite tedious.
 
-Consider the template below. This uses a <code>t2.micro</code> instance to provision a Red Hat image with no customizations.
+Consider the template below. This uses a `t2.micro` instance to provision a Red Hat image with no customizations.
 
-[code lang=bash]
+```
 {
-&quot;description&quot;: &quot;Basic RHEL image.&quot;,
-&quot;variables&quot;: {
-&quot;access_key&quot;: null,
-&quot;secret_key&quot;: null
-},
-&quot;builders&quot;: [
-{
-&quot;type&quot;: &quot;amazon-ebs&quot;,
-&quot;access_key&quot;: &quot;{{ user `access_key` }}&quot;,
-&quot;secret_key&quot;: &quot;{{ user `secret_key` }}&quot;,
-&quot;region&quot;: &quot;us-east-1&quot;,
-&quot;instance_type&quot;: &quot;t2.micro&quot;,
-&quot;source_ami&quot;: &quot;ami-c998b6b2&quot;,
-&quot;ami_name&quot;: &quot;test_ami&quot;,
-&quot;ssh_username&quot;: &quot;ec2-user&quot;,
-&quot;vpc_id&quot;: &quot;vpc-8a2dbbf2&quot;,
-&quot;subnet_id&quot;: &quot;subnet-306b673c&quot;
+  "description": "Basic RHEL image.",
+  "variables": {
+  "access_key": null,
+  "secret_key": null
+  },
+  "builders": [
+    {
+    "type": "amazon-ebs",
+    "access_key": "{{ user `access_key` }}",
+    "secret_key": "{{ user `secret_key` }}",
+    "region": "us-east-1",
+    "instance_type": "t2.micro",
+    "source_ami": "ami-c998b6b2",
+    "ami_name": "test_ami",
+    "ssh_username": "ec2-user",
+    "vpc_id": "vpc-8a2dbbf2",
+    "subnet_id": "subnet-306b673c"
+    }
+  ],
+  "provisioners": [
+    {
+    "type": "shell",
+    "inline": [
+      "#This is required to allow us to use `sudo` from our Packer provisioner.",
+      "#This is enabled by default on all RHEL images for \"security.\"",
+      "sudo sed -i.bak -e ';/Defaults.*requiretty/s/^/#/'; /etc/sudoers"
+    ]
+  },
+  {
+    "type": "shell",
+    "inline": ["echo Hey there"]
+  }
+  ]
 }
-],
-&quot;provisioners&quot;: [
-{
-&quot;type&quot;: &quot;shell&quot;,
-&quot;inline&quot;: [
-&quot;#This is required to allow us to use `sudo` from our Packer provisioner.&quot;,
-&quot;#This is enabled by default on all RHEL images for \&quot;security.\&quot;&quot;,
-&quot;sudo sed -i.bak -e &#039;/Defaults.*requiretty/s/^/#/&#039; /etc/sudoers&quot;
-]
-},
-{
-&quot;type&quot;: &quot;shell&quot;,
-&quot;inline&quot;: [&quot;echo Hey there&quot;]
-}
-]
-}
-[/code]
+```
 
 Assuming a fast internet connection (I did this test with a ~6 Mbit connection), it doesn't take too much time for Packer to generate an AMI for us.
 
-[code lang=bash]
-$ time packer build -var &#039;access_key=REDACTED&#039; -var &#039;secret_key=REDACTED&#039; aws.json
-==&gt; amazon-ebs: Creating temporary security group for this instance: packer_5a136414-1ba5-7c7d-890c-697a8563d4be
-==&gt; amazon-ebs: Authorizing access to port 22 from 0.0.0.0/0 in the temporary security group...
-==&gt; amazon-ebs: Launching a source AWS instance...
-==&gt; amazon-ebs: Adding tags to source instance
-amazon-ebs: Adding tag: &quot;Name&quot;: &quot;Packer Builder&quot;
+```
+$ time packer build -var ';access_key=REDACTED'; -var ';secret_key=REDACTED'; aws.json
+==> amazon-ebs: Creating temporary security group for this instance: packer_5a136414-1ba5-7c7d-890c-697a8563d4be
+==> amazon-ebs: Authorizing access to port 22 from 0.0.0.0/0 in the temporary security group...
+==> amazon-ebs: Launching a source AWS instance...
+==> amazon-ebs: Adding tags to source instance
+amazon-ebs: Adding tag: "Name": "Packer Builder"
 ...
 amazon-ebs: Hey there
-==&gt; amazon-ebs: Stopping the source instance...
+==> amazon-ebs: Stopping the source instance...
 amazon-ebs: Stopping instance, attempt 1
-==&gt; amazon-ebs: Waiting for the instance to stop...
-==&gt; amazon-ebs: Creating the AMI: test_ami
+==> amazon-ebs: Waiting for the instance to stop...
+==> amazon-ebs: Creating the AMI: test_ami
 amazon-ebs: AMI: ami-20ff765a
 ...
-Build &#039;amazon-ebs&#039; finished.
+Build ';amazon-ebs'; finished.
 
-==&gt; Builds finished. The artifacts of successful builds are:
---&gt; amazon-ebs: AMIs were created:
+==> Builds finished. The artifacts of successful builds are:
+--> amazon-ebs: AMIs were created:
 us-east-1: ami-20ff765a
 
 real 1m50.900s
 user 0m0.020s
 sys 0m0.008s
-[/code]
+```
 
 Let's repeat this exercise with Azure. Here's that template again, but Azure-ified:
 
-[code lang=bash]
+```
 {
-&quot;description&quot;: &quot;Basic RHEL image.&quot;,
-&quot;variables&quot;: {
-&quot;client_id&quot;: null,
-&quot;client_secret&quot;: null,
-&quot;subscription_id&quot;: null,
-&quot;azure_location&quot;: null,
-&quot;azure_resource_group_name&quot;: null
-},
-&quot;builders&quot;: [
-{
-&quot;type&quot;: &quot;azure-arm&quot;,
-&quot;communicator&quot;: &quot;ssh&quot;,
-&quot;ssh_pty&quot;: true,
-&quot;managed_image_name&quot;: &quot;rhel-{{ user `base_rhel_version` }}-rabbitmq-x86_64&quot;,
-&quot;managed_image_resource_group_name&quot;: &quot;{{ user `azure_resource_group_name` }}&quot;,
-&quot;os_type&quot;: &quot;Linux&quot;,
-&quot;vm_size&quot;: &quot;Standard_B1&quot;,
-&quot;client_id&quot;: &quot;{{ user `client_id` }}&quot;,
-&quot;client_secret&quot;: &quot;{{ user `client_secret` }}&quot;,
-&quot;subscription_id&quot;: &quot;{{ user `subscription_id` }}&quot;,
-&quot;location&quot;: &quot;{{ user `azure_location` }}&quot;,
-&quot;image_publisher&quot;: &quot;RedHat&quot;,
-&quot;image_offer&quot;: &quot;RHEL&quot;,
-&quot;image_sku&quot;: &quot;7.3&quot;,
-&quot;image_version&quot;: &quot;latest&quot;
+  "description": "Basic RHEL image.",
+  "variables": {
+    "client_id": null,
+    "client_secret": null,
+    "subscription_id": null,
+    "azure_location": null,
+    "azure_resource_group_name": null
+  },
+  "builders": [
+    {
+      "type": "azure-arm",
+      "communicator": "ssh",
+      "ssh_pty": true,
+      "managed_image_name": "rhel-{{ user `base_rhel_version` }}-rabbitmq-x86_64",
+      "managed_image_resource_group_name": "{{ user `azure_resource_group_name` }}",
+      "os_type": "Linux",
+      "vm_size": "Standard_B1",
+      "client_id": "{{ user `client_id` }}",
+      "client_secret": "{{ user `client_secret` }}",
+      "subscription_id": "{{ user `subscription_id` }}",
+      "location": "{{ user `azure_location` }}",
+      "image_publisher": "RedHat",
+      "image_offer": "RHEL",
+      "image_sku": "7.3",
+      "image_version": "latest"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "#This is required to allow us to use `sudo` from our Packer provisioner.",
+        "#This is enabled by default on all RHEL images for \"security.\"",
+        "sudo sed -i.bak -e ';/Defaults.*requiretty/s/^/#/'; /etc/sudoers"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": ["echo Hey there"]
+    }
+  ]
 }
-],
-&quot;provisioners&quot;: [
-{
-&quot;type&quot;: &quot;shell&quot;,
-&quot;inline&quot;: [
-&quot;#This is required to allow us to use `sudo` from our Packer provisioner.&quot;,
-&quot;#This is enabled by default on all RHEL images for \&quot;security.\&quot;&quot;,
-&quot;sudo sed -i.bak -e &#039;/Defaults.*requiretty/s/^/#/&#039; /etc/sudoers&quot;
-]
-},
-{
-&quot;type&quot;: &quot;shell&quot;,
-&quot;inline&quot;: [&quot;echo Hey there&quot;]
-}
-]
-}
-[/code]
+```
 
-And here's us running this Packer build. I decided to use a <code>Basic_A0</code> instance size, as that is the closest thing that Azure has to a <code>t2.micro</code> instance that was available for my subscription. (The <code>Standard_B</code> series is what I originally intended to use, as, like the <code>t2</code> line, those are burstable.)
+And here's us running this Packer build. I decided to use a `Basic_A0</code> instance size, as that is the closest thing that Azure has to a <code>t2.micro</code> instance that was available for my subscription. (The <code>Standard_B</code> series is what I originally intended to use, as, like the <code>t2` line, those are burstable.)
 
 Notice that it takes almost **TEN times** as long with the same Linux distribution and similar instance sizes!
 
-[code lang=bash]
-$ packer build -var &#039;client_id=REDACTED&#039; -var &#039;client_secret=REDACTED&#039; -var &#039;subscription_id=REDACTED&#039; -var &#039;tenant_id=REDACTED&#039; -var &#039;resource_group=REDACTED&#039; -var &#039;location=East US&#039; azure.json
+```
+$ packer build -var ';client_id=REDACTED'; -var ';client_secret=REDACTED'; -var ';subscription_id=REDACTED'; -var ';tenant_id=REDACTED'; -var ';resource_group=REDACTED'; -var ';location=East US'; azure.json
 azure-arm output will be in this color.
 
-==&gt; azure-arm: Running builder ...
+==> azure-arm: Running builder ...
 azure-arm: Creating Azure Resource Manager (ARM) client ...
-==&gt; azure-arm: Creating resource group ...
-==&gt; azure-arm: -&gt; ResourceGroupName : &#039;packer-Resource-Group-s6sj74tdvk&#039;
-==&gt; azure-arm: -&gt; Location : &#039;East US&#039;
+==> azure-arm: Creating resource group ...
+==> azure-arm: -> ResourceGroupName : ';packer-Resource-Group-s6sj74tdvk';
+==> azure-arm: -> Location : ';East US';
 ...
 azure-arm: Hey there
-==&gt; azure-arm: Querying the machine&#039;s properties ...
-==&gt; azure-arm: -&gt; ResourceGroupName : &#039;packer-Resource-Group-s6sj74tdvk&#039;
-==&gt; azure-arm: -&gt; ComputeName : &#039;pkrvms6sj74tdvk&#039;
-==&gt; azure-arm: -&gt; Managed OS Disk : &#039;/subscriptions/8bbbc92b-6d16-4eb2-8f95-7a0769748c8d/resourceGroups/packer-Resource-Group-s6sj74tdvk/providers/Microsoft.Compute/disks/osdisk&#039;
-==&gt; azure-arm: Powering off machine ...
-==&gt; azure-arm: -&gt; ResourceGroupName : &#039;packer-Resource-Group-s6sj74tdvk&#039;
-==&gt; azure-arm: -&gt; ComputeName : &#039;pkrvms6sj74tdvk&#039;
-==&gt; azure-arm: Capturing image ...
-==&gt; azure-arm: -&gt; Compute ResourceGroupName : &#039;packer-Resource-Group-s6sj74tdvk&#039;
-==&gt; azure-arm: -&gt; Compute Name : &#039;pkrvms6sj74tdvk&#039;
-==&gt; azure-arm: -&gt; Compute Location : &#039;East US&#039;
-==&gt; azure-arm: -&gt; Image ResourceGroupName : &#039;REDACTED&#039;
-==&gt; azure-arm: -&gt; Image Name : &#039;IMAGE_NAME&#039;
-==&gt; azure-arm: -&gt; Image Location : &#039;eastus&#039;
-&lt;strong&gt;==&gt; azure-arm: Deleting resource group ...&lt;/strong&gt;
-==&gt; azure-arm: -&gt; ResourceGroupName : &#039;packer-Resource-Group-s6sj74tdvk&#039;
-==&gt; azure-arm: Deleting the temporary OS disk ...
-==&gt; azure-arm: -&gt; OS Disk : skipping, managed disk was used...
-Build &#039;azure-arm&#039; finished.
+==> azure-arm: Querying the machine';s properties ...
+==> azure-arm: -> ResourceGroupName : ';packer-Resource-Group-s6sj74tdvk';
+==> azure-arm: -> ComputeName : ';pkrvms6sj74tdvk';
+==> azure-arm: -> Managed OS Disk : ';/subscriptions/8bbbc92b-6d16-4eb2-8f95-7a0769748c8d/resourceGroups/packer-Resource-Group-s6sj74tdvk/providers/Microsoft.Compute/disks/osdisk';
+==> azure-arm: Powering off machine ...
+==> azure-arm: -> ResourceGroupName : ';packer-Resource-Group-s6sj74tdvk';
+==> azure-arm: -> ComputeName : ';pkrvms6sj74tdvk';
+==> azure-arm: Capturing image ...
+==> azure-arm: -> Compute ResourceGroupName : ';packer-Resource-Group-s6sj74tdvk';
+==> azure-arm: -> Compute Name : ';pkrvms6sj74tdvk';
+==> azure-arm: -> Compute Location : ';East US';
+==> azure-arm: -> Image ResourceGroupName : ';REDACTED';
+==> azure-arm: -> Image Name : ';IMAGE_NAME';
+==> azure-arm: -> Image Location : ';eastus';
+<strong>==> azure-arm: Deleting resource group ...</strong>
+==> azure-arm: -> ResourceGroupName : ';packer-Resource-Group-s6sj74tdvk';
+==> azure-arm: Deleting the temporary OS disk ...
+==> azure-arm: -> OS Disk : skipping, managed disk was used...
+Build ';azure-arm'; finished.
 
-==&gt; Builds finished. The artifacts of successful builds are:
---&gt; azure-arm: Azure.ResourceManagement.VMImage:
+==> Builds finished. The artifacts of successful builds are:
+--> azure-arm: Azure.ResourceManagement.VMImage:
 
 ManagedImageResourceGroupName: REDACTED
 ManagedImageName: IMAGE_NAME
 ManagedImageLocation: eastus
 
-&lt;strong&gt;real 10m27.036s
+<strong>real 10m27.036s
 user 0m0.056s
-sys 0m0.020s&lt;/strong&gt;
+sys 0m0.020s</strong>
 
-[/code]
+```
 
 The worst part about this is that it takes this long *even when it fails!*
 
@@ -192,24 +202,24 @@ Notice the "Deleting resource group..." line I highlighted. You'll likely spend 
 
 1. Azure creating intermediate resources, such as virtual networks (VNets), subnets and compute, all of which can take time,
 2. ARM waiting for downstream SDKs to finish deleting resources and/or any associated metadata, and
-3. Packer issuing [asynchronous operations](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-async-operations "") to the Azure ARM service, which requires polling the <code>operationResult</code> endpoint every so often to see how things played out.
+3. Packer issuing [asynchronous operations](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-async-operations "") to the Azure ARM service, which requires polling the `operationResult` endpoint every so often to see how things played out.
 
-## Pro-Tip: Use the <code>az</code> Python CLI before running things!
+## Pro-Tip: Use the `az` Python CLI before running things!
 
-As recovering from Packer failures can be quite time-consuming, you might want to consider leveraging the Azure command-line clients to ensure that inputs into Packer templates are correct. Here's quick example: if you want to confirm that the service principal <code>client_id</code> and <code>client_secret</code> are correct, you might want to add something like this into your pipeline:
+As recovering from Packer failures can be quite time-consuming, you might want to consider leveraging the Azure command-line clients to ensure that inputs into Packer templates are correct. Here's quick example: if you want to confirm that the service principal `client_id</code> and <code>client_secret` are correct, you might want to add something like this into your pipeline:
 
-[code lang=bash]
+```
 #!/usr/bin/env bash
 client_id=$1
 client_secret=$2
 tenant_id=$3
 
-if ! az login --service-principal -u &quot;$client_id&quot; -p &quot;$client_secret&quot; --tenant &quot;$tenant_id&quot;
+if ! az login --service-principal -u "$client_id" -p "$client_secret" --tenant "$tenant_id"
 then
-echo &quot;ERROR: Invalid credentials.&quot; &gt;&amp;2
-exit 1
+  echo "ERROR: Invalid credentials." >&amp;2
+  exit 1
 fi
-[/code]
+```
 
 This will save you at least three minutes during exection...as well as something else that's a little more frustrating.
 
@@ -217,7 +227,7 @@ This will save you at least three minutes during exection...as well as something
 
 Both the AWS and Azure Terraform providers and Packer builders are mostly maintained internally by HashiCorp. However, what you'll find out after using the Azure ARM provider for a short while is that its usage within the community *pales* in comparison.
 
-I ran into an issue with the <code>azure-arm</code> builder whereby it failed to find a resource group that I created for an image I was trying to build. Locating that resource group with <code>az groups list</code> and the same client_id and secret worked fine, and I was able to find the resource group in the console. As well, I gave the service principal "Owner" permission, so there were no access limitations preventing it from finding this resource group.
+I ran into an issue with the `azure-arm</code> builder whereby it failed to find a resource group that I created for an image I was trying to build. Locating that resource group with <code>az groups list` and the same client_id and secret worked fine, and I was able to find the resource group in the console. As well, I gave the service principal "Owner" permission, so there were no access limitations preventing it from finding this resource group.
 
 After spending some time going into the builder source code and firing up [Charles Web Proxy](https://charlesproxy.com ""), it turned out that my error had nothing to do with resource groups! It turns out that [the credentials I was passing into Packer from my Makefile were incorrect](https://github.com/hashicorp/packer/issues/5610 "").
 
@@ -238,14 +248,14 @@ This is most evident when one is just getting started with AWS and the HashiCorp
 3. Go to [IAM](https://console.aws.amazon.com/iam "") and create a new user.
 4. Download the access and secret keys that Amazon gives you.
 5. Assign that user Admin privileges over all AWS services.
-6. Download the AWS CLI (or install Docker and use the <code>anigeo/awscli</code> image)
-7. Configure your client: <code>aws configure</code>
-8. Create a VPC: <code>aws ec2 create-vpc --cidr-block 10.0.0.0/16</code>
-9. Create an Internet Gateway: <code>aws ec2 create-internet-gateway</code>
-10. Attach the gateway to your VPC so that your machines can Internet: <code>aws ec2 attach-internet-gateway --internet-gateway-id $id_from_step_9 --vpc-id $vpc_id_from_step_8</code>
-11. Create a subnet: <code>aws ec2 create-subnet --vpc-id $vpc_id_from_step_8 --cidr-block 10.0.1.0/24</code>
-12. Update that subnet so that it can issue publicly accessible IP addresses to VMs created within it: <code>aws ec2 modify-subnet-attribute --subnet-id $subnet_id_from_step_11 --map-public-ip-on-launch</code>
-13. Download Packer (or use the <code>hashicorp/packer</code> Docker image)
+6. Download the AWS CLI (or install Docker and use the `anigeo/awscli` image)
+7. Configure your client: `aws configure`
+8. Create a VPC: `aws ec2 create-vpc --cidr-block 10.0.0.0/16`
+9. Create an Internet Gateway: `aws ec2 create-internet-gateway`
+10. Attach the gateway to your VPC so that your machines can Internet: `aws ec2 attach-internet-gateway --internet-gateway-id $id_from_step_9 --vpc-id $vpc_id_from_step_8`
+11. Create a subnet: `aws ec2 create-subnet --vpc-id $vpc_id_from_step_8 --cidr-block 10.0.1.0/24`
+12. Update that subnet so that it can issue publicly accessible IP addresses to VMs created within it: `aws ec2 modify-subnet-attribute --subnet-id $subnet_id_from_step_11 --map-public-ip-on-launch`
+13. Download Packer (or use the `hashicorp/packer` Docker image)
 14. Create a [Packer template](https://www.packer.io/docs/builders/amazon-ebs.html "") for Amazon EBS.
 15. Deploy! `packer build -var 'access_key=$access_key' -var 'secret_key=$secret_key' your_template.json
 
@@ -259,10 +269,4 @@ Using multiple cloud providers is a smart way of leveraging different pricing sc
 
 HashiCorp tools like Terraform and Packer make managing this sort of infrastructure much easier to do. However, both providers aren't created equal, and the AWS support that exists is, at this time of writing, significantly more extensive. While this certainly doesn't make using Azure with Terraform or Packer impossible, you might find yourself doing more homework than initially expected!
 
-# About Me
-
-<div style="text-align:center;">
-<img src="https://carlosonunez.files.wordpress.com/2017/11/img-0456-min.jpg" alt="IMG-0456-min" width="232" height="309" class="alignnone size-full wp-image-1436" />
-</div>
-
-I'm a Technical Principal for [Contino](https://contino.io ""). We specialize in helping large and heavily-regulated enterprises make cloud adoption and DevOps culture a reality. I'm passionate about bringing DevOps to the enterprise. I'm also passionate about bikes, brews and travel!
+{{< about_me >}}
