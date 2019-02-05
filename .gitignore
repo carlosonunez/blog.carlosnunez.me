@@ -12,3 +12,6 @@ themes/
 
 # Ignore auto-generated config
 config.toml
+
+# Ignore backup todo files
+.todo.txt.bak

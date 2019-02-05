@@ -1,3 +1,4 @@
+<meta name="google-site-verification" content="{{ .Site.Params.GoogleSearchVerificationCode }}" />
 {{ if .Site.Params.Keywords }}
 {{ if .Keywords }}
 <meta name="KEYWORDS" content="{{ .Site.Params.Keywords }},{{ range .Keywords}}{{ . }},{{ end }},writing">
@@ -18,11 +19,11 @@
     "headline" : "{{ .Title }}",
     "description" : "{{ if .Description }}{{ .Description }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ end }}{{ end }}",
     "inLanguage" : "en-US",
-    "author" : "Carlos Nunez",
-    "creator" : "Carlos Nunez",
-    "publisher": "Carlos Nunez",
-    "accountablePerson" : "Carlos Nunez",
-    "copyrightHolder" : "Carlos Nunez",
+    "author" : "{{ .Site.Params.Author }}",
+    "creator" : "{{ .Site.Params.Author }}",
+    "publisher": "{{ .Site.Params.Author }}",
+    "accountablePerson" : "{{ .Site.Params.Author }}",
+    "copyrightHolder" : "{{ .Site.Params.Author }}",
     "copyrightYear" : "{{ .Date.Format "2006" }}",
     "datePublished": "{{ .Date }}",
     "dateModified" : "{{ .Date }}",

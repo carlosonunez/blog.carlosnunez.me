@@ -15,6 +15,7 @@ googleAnalytics = "{{ .Env.HUGO_GOOGLEANALYTICS }}"
   twitter = "{{ .Env.TWITTER_HANDLE }}"
   linkedin = "{{ .Env.LINKEDIN_HANDLE }}"
   author = "{{ file.Read "AUTHOR" | strings.ReplaceAll "\n" "" }}"
+  googleSearchVerificationCode = "{{ .Env.HUGO_GOOGLE_SEARCH_VERIFICATION_CODE }}"
 [menu]
   [[ menu.main ]]
     identifier = "about-me"
