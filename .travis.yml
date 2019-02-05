@@ -31,3 +31,10 @@ jobs:
       - cp ../config.toml.tmpl config.toml.tmpl
       - make create_site_folder_so_travis_works 
       - make deploy
+notifications:
+  email:
+    recipients:
+      - dev@carlosnunez.me
+    on_success: true
+    on_failure: true
+
