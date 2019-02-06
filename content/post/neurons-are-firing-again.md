@@ -29,7 +29,7 @@ am, I can write again!
 
 # Why do you hate WordPress so much, Carlos?
 
-{{< post_image name="wordpress_sucks.png" alt="WordPress sucks!" >}}
+{{< post_image name="wordpress_sucks" alt="WordPress sucks!" >}}
 
 Because principals.
 
@@ -71,7 +71,7 @@ lighter?
 
 # The Goal
 
-{{< post_image name="the_goal.png" alt="BlogOps" >}}
+{{< post_image name="the_goal" alt="BlogOps" >}}
 
 This was what I wanted my blog to be:
 
@@ -89,7 +89,7 @@ Essentially, I wanted a fast, super simple blog driven by CI and Git Flow.
 
 # Hello, Hugo
 
-{{< post_image name="hello_hugo.png" alt="The champ of statically generated websites" >}}
+{{< post_image name="hello_hugo" alt="The champ of statically generated websites" >}}
 
 I knew that Git-friendly blogs like Ghost existed, but I didn't really know the
 landscape well. So I went looking and stumbled upon [Hugo](https://gohugo.io)
@@ -110,7 +110,7 @@ statically generated and copied onto the web server of your choice.
 
 # Serverless all the things!
 
-{{< post_image name="serverless.png" alt="Why not Serverless" >}}
+{{< post_image name="serverless" alt="Why not Serverless" >}}
 
 So my natural inclination was "let's do serverless!"
 
@@ -130,66 +130,224 @@ will probably be much more useful for automated chores (like purging old
 `index.html` files since they are versioned; more later), using it for core blog
 workloads didn't make sense.
 
+# S3
 
+{{< post_image name="s3" >}}
+
+Using AWS S3 and S3 Static Web Hosting made much more sense. Using this would
+enable me to build the blog locally, test it with Hugo and sync the files up to
+a designated bucket. The only negatives with this approach are:
+
+- Websites hosted out of S3 do not support custom SSL certificates. The only way
+  to work around this is by using a CloudFront distribution and making the S3
+  bucket an origin. While this does satisfy the "make it fast everywhere" goal,
+  it does complicate my infrastructure a slight bit, and it slightly increases
+  cost.
+
+- It isn't possible to do "clean" integration tests, since the Hugo web server
+  makes different assumptions than S3's web server. Now that I think about it,
+  though, I'm not sure if clean integration tests were ever possible since we
+  can't locally bring up a S3 web server.
+
+# Automating all of this!
+
+[Terraform](https://hashicorp.com/terraform), [Docker](https://docker.io) and Make, of course!
+
+## Terraform all the things!
+
+{{< post_image name="terraform" >}}
+
+I could have used [AWS CloudFormation](https://aws.amazon.com/cloudformation) to
+provision all of this, but I wanted to use something that would make it easy for
+me to host blogs on multiple clouds. While I'm using AWS for this now, I intend
+on getting an Azure certification this year, and hosting this blog on it will be
+an easy way for me to study. I've also been using Terraform for many, many
+years, and absolutely love it. There is no easier way of provisioning
+infrastructure (though [Pulumi](https://www.pulumi.com) is looking *very*
+interesting), and it supports just about every cloud provider out there.
+
+## Docker all the things, too!
+
+I could have created provisioning scripts that install Hugo and other tools
+required to provision my blog, but why do that when I can use Docker instead?
+[Containers](https://blog.carlosnunez.me/post/a-completely-neutral-post-about-containers/)
+make it really easy to deploy and run applications in consistent environments
+anywhere. Docker Compose makes it easy to link multiple containers with each
+other and run containerized tasks repeatedly. Combining the two made
+provisioning super easy!
+
+### Docker in Docker, though.
+
+The biggest challenge with this was dealing with the Docker in Docker problem.
+While nested containers aren't bad _per se_, accessing networked services, like
+my local Hugo server, or mounting volumes on them basically required host-mode
+networking and passing paths on the host downstream. This can introduce security
+vulnerabilities, as it allows containers (with root access) to bind processes
+onto real ports on the host machine.
+
+Additionally, starting Docker Compose or Docker from within nested containers requires that the
+`docker` and `docker-compose` binaries be present in the container's `$PATH`.
+I develop on a Mac, and OS X doesn't allow you to simply mount these binaries on
+your computer since the Docker for Mac daemon treats the directories they live
+in as "special" directories that can't be volume-mounted. To work around this, I
+have to install Docker and Docker Compose on some containers when they start up.
+Not ideal, but it works.
+
+## Make all the things, too!
+
+{{< post_image name="make" >}}
+
+Choosing a build runner for this code was slightly more complicated. I generally
+err to writing Bash scripts in the first instance, as I know Bash well (despite
+it being a poor language compared to other scripting languages like Python or
+Ruby), I can count on it being available on just about anything and
+linting/testing it is easy to do with [ShellCheck](https://shellcheck.net) and
+[BATS](https://github.com/sstephenson/bats), respectively.
+
+However, I like using Make since it is slightly more portable and it is 
+somewhat friendlier for actually _building_ stuff with that doesn't product
+explicit build artifacts. I'm guilty of writing [really, really
+complicated](https://github.com/carlosonunez/infrastructure/tree/master/kubernetes)
+`Makefile`s though, so I wanted to be _really_ careful about making my Make
+structure easily readable and approachable this time. 
+
+## Handling secrets
+
+Committing sensitive cloud provider API keys would be [pretty
+bad](https://medium.com/@selvaganesh93/what-happens-if-you-accidentally-commit-your-aws-access-token-to-public-github-be50d378b4c7).
+However, I didn't want to set up a [Vault](https://hashicorp.com/vault) cluster
+and worry about that "chicken-and-egg" problem. So I resorted to a simpler
+approach: environment dotfiles in AWS S3 and an example dotfile committed to
+Git.
+
+While dotfiles have the "but you can store them insecurely!" problem, they are
+easy to reason about and easy to import into Make and other tools.
+
+# CI/CD
+
+{{< post_image name="ci_cd" >}}
+
+I decided on using [Travis CI](https://travis-ci.org) for CI/CD. I've been using
+it for many years and have generally been happy with it. I like being able to
+simply drop a `.travis.yml` into my repository describing my build, test and
+deploy stages. It is _way_ easier to use and _way_ harder to abuse than
+the `Jenkinsfile`s that I've seen and written in the past for Jenkins. Their CLI
+tool is also great, albeit buggy, and allows me to monitor and invoke builds
+without having to use the website.
+
+# The final product!
+
+{{< post_image name="blog_pipeline" >}}
+
+After many weeks of iteration and failure,
+[bloggen](https://github.com/carlosonunez/https-hugo-bloggen) was born! Here's
+how it works! It's not the friendliest process, but it's a start.
+
+- Create a Git repository containing a  Hugo blog with the standard 
+  Hugo directory hierarchy and files.
+
+- Add a `config.toml.tmpl` file. This is a
+  [gomplate](https://github.com/hairyhenderson/gomplate)-templated version of
+  Hugo's `config.toml`. This allows for more flexibility, such as using
+  environment variables to define site properties.
+
+- Clone `blog-gen` to your blog's Git repository. Ensure that you add the
+  directory to your `.gitignore` to avoid committing a reference to it. (Git
+  will not commit sub-repositories by default unless they are added as
+  sub-modules).
+
+- Copy `.env.test` from your `blog-gen` repository to your blog's repository.
+  Fill in the dummy values and save as `.env.`
+
+- Create a Docker Compose file that looks something [like
+  this](https://github.com/carlosonunez/blog.carlosnunez.me/blob/master/docker-compose.yml)
+  inside of your blog's repository.
+
+- Create a `.travis.yml` that looks something [like
+  this](https://github.com/carlosonunez/blog.carlosnunez.me/blob/master/.travis.yml)
+  inside of your blog's repository. Make sure that you activate the project
+  within Travis first and define these environment variables:
+
+  * `AWS_ACCESS_KEY_ID`
+  * `AWS_SECRET_ACCESS_KEY`
+  * `AWS_REGION`
+  * `DOTENV_S3_BUCKET` (the S3 bucket containing your "production" `.env`)
+
+- Run `docker-compose up start-local-blog` to start a local instance of your
+  blog. Visit `http://localhost:8080` to see it in your browser. (The port can
+  be changed from within your `.env.test` file.)
+
+- If you like how it looks, commit and push your changes. Travis should build
+  the build, create the S3 bucket and CloudFront distribution and deploy your
+  blog to the S3 bucket. Provisioning it for the first time takes about 20
+  minutes because CloudFront is slow.
+
+## Underneath the hood
+
+{{< post_image name="under-the-hood" >}}
+
+There are a few moving parts within `blog-gen`. Here's how they work:
+
+- It looks for a `.env` with environment variables describing the Hugo website
+  to be provisionined, the provider the blog is being deployed to and the
+  location to store sensitive data such as Terraform state and passwords.
+
+- If the `.env` isn't present locally, it tries to fetch it from cloud storage
+  (S3 at the moment) defined by an `.env_info` file. `bloggen` exits if this
+  fails.
+
+- The `.env` file contains an `INFRASTRUCTURE_PROVIDER` environment variable.
+  Terraform code within `blog-gen` is broken up by cloud provider and stored
+  within the `infrastructure` directory. This environment variable selects the
+  directory to use within this directory.
+
+- `make deploy_infrastructure` initializes the Terraform code found above,
+  generates a Terraform plan and `apply`s it. Terraform is executed in a Docker
+  container, and the version of the image selected is defined within an
+  environment variable. The intermediate Make steps that do all of this work are
+  defined in Makefile includes within the `include/make/terraform` folder.
+
+- `make deploy_blog` runs next. This uses Docker Compose via intermediate Make
+  build steps within `include/make/hugo` and `include/compose/hugo` to build the
+  Hugo blog and deploy the files generated by it to S3 (or a different cloud
+  provider per `$INFRASTRUCTURE_PROVIDER`).
+
+  Hugo generates an `index.html` file with a summary of blog posts.
+  Because it can take some time for CloudFront and local browsers to pick up
+  changes to this file due to the nature of caching, we have to invalidate this
+  file whenever we make changes to it. I could have used CloudFront Cache
+  Invalidations to do this, but I only get 1000 of those per month and it can
+  take time for the invalidation to complete.
+
+  A much simpler and more instant solution is versioning `index.html` by
+  appending commit SHA's to the end of the file. When clients try to request the
+  file by going to https://blog.carlosnunez.me, the distribution won't have the
+  file immediately available and will fetch the file from S3 directly. This
+  introduces some latency for fresh new posts, but that latency goes away after
+  the distribution has been updated (about 20 minutes).
+
+- Travis checks for liveliness after the blog has been deployed by trying to
+  fetch it with `curl` for a given amount of time (three minutes by default).
+
+# Mission Accomplished!
+
+{{< post_image name="mission-accomplished" >}}
+
+Due to the pipeline above, this blog post is:
+
+- Written entirely in Markdown,
+- Vetted locally with a local Hugo server,
+- [Stored in
+  Git](https://github.com/carlosonunez/blog.carlosnunez.me/blob/master/content/post/neurons-are-firing-again.md),
+- Deployed and tested via CI, and
+- Globally and securely available via CloudFront with my own HTTPS certificate.
+
+On top of all of that, it takes about two minutes to release new blog posts, and
+new content is immediately available everywhere after that.
+
+I'm pretty happy with this dogfood!
 
 Outline:
-
-- The Problem
-  - I ran on WordPress for a while
-  - Hated that writing Markdown was harder than it should ever be
-  - I'm a developer, dammit; I should be using Git for everything.
-  - I'm not paying $13/month for a custom domain with HTTPS.
-  - Thus the idea of moving to a statically-generated blog was born!
-- The Goals
-  - An easily-deployable blog with a custom domain and HTTPS
-  - A pipeline for deploying blog posts, complete with unit and integration
-    testing
-  - A platform that makes search engine discoverability easy.
-- Hugo
-  - You can host your blog or statically generate it
-  - Golang is best lang
-  - Free and open source
-  - Awesome contribution team
-- Serverless idea
-  - Quickly shot down
-  - Blog is static; serverless is additional overhead
-  - I might use serverless for maintenance tasks, though!
-- S3
-  - Much better solution
-  - Easy to sync and easy to host a website out of
-  - But I wanted HTTPS; not possible with S3 hosting alone
-- CloudFront
-  - Didn't really want it, but it does enable HTTPS
-  - It also enables super fast access anywhere in NA or Europe
-  - Also pretty easy to deploy
-- Integration Testing Sucks
-  - Takes 20 minutes to turn a distribution up or down
-  - No way to test the certificates I create since they are appended to CF
-    and not S3
-  - Integration testing really ensures that the blog renders on S3 and is
-    accessible from the Internet
-  - Not ideal, however; I'd like a super small CF distribution for integration
-    tests!
-- Certificates
-  - Started with Let's Encrypt
-  - Provisioning was easy with Terraform, but...
-    - LE rate-limits certificate provisioning, but the error shown from 
-      Terraform is a generic 403
-    - This limit applies to both the staging and production ACME repos
-    - Configuring staging and production parameters required WAY more
-      Terraform code
-  - Decided to use AWS ACM certificates instead
-    - This makes multi-cloud more difficult
-    - But it makes provisioning HTTP on CF easier
-- CI
-  - Originally wanted to make bloggen for my blog only
-  - Decided later on that this might be useful for other people that want
-    a cheap, global-scalable Hugo blog on the internet super easily
-  - Separating my work into a separate project was difficult
-  - Lessons learned
-    - Always design as if someone else will use it from the onset
-    - Docker in Docker reduces portability, so proceed with caution
-    - A CI build system that's easy to test with locally is very, very valuable
 - I'm happy
   - Blog is available and easily accessible from my own address
   - I can configure as much or as little SEO as I want
