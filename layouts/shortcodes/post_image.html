@@ -1,0 +1,4 @@
+<img src="/image/{{ .Page.Slug }}/{{.Get "name"}}"
+     height="{{ if (.Get "height") }}{{ .Get "height" }}{{ else }}100%{{ end }}"
+     width="{{ if (.Get "width") }}{{ .Get "width" }}{{ else }}100%{{ end }}"
+     alt="{{ if (.Get "height") }}{{ .Get "height" }}{{ else }}{{.Get "name"}}{{ end }}">
