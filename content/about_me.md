@@ -3,7 +3,6 @@ title: I'm Carlos!
 date: "2019-01-12"
 slug: "about-me"
 linktitle: "About Me"
-weight: 100000000000000
 ---
 
 <img src="/images/me_20190114.jpg" height=45% width=45%>
