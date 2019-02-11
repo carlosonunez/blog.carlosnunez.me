@@ -49,5 +49,4 @@ services:
     working_dir: /app
     environment:
       - HOST_PWD=${PWD}
-      - VERBOSE=true
-    command: start_local_blog
+    command: start_local_blog_with_drafts
