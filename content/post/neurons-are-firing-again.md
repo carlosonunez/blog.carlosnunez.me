@@ -3,7 +3,7 @@ title: "neurons are firing again! How I eat my own dogfood with my blog."
 draft: true
 date: 2019-02-06
 slug: "neurons-are-firing-again"
-image: "/images/neutrons-are-firing-again/header.png"
+image: "/images/neurons-are-firing-again/header.jpg"
 description: >-
   How I migrated from WordPress to Hugo on AWS and saved >$10/month in the
   process.
@@ -74,15 +74,15 @@ lighter?
 
 This was what I wanted my blog to be:
 
-- Every post to be version-controlled in GitHub.
-- Every post is pure, high-grade, unadulterated Markdown.
-- The blog would be super fast anywhere and extremely light on JavaScript.
-- The blog would have no ads, anywhere, ever.
-- The blog can be tested locally and will look and behave the same on the web.
-- Adding anything to the blog, including SEO for discoverability, would be easy.
-- The blog would be _stupid cheap to run_.
-- The blog would be _stupid easy_ to reproduce anywhere, any time.
-- The blog will be deployed via CI whenever I post new content.
+- ***Powered by Git***: Every post to be version-controlled in GitHub.
+- ***Markdown everywhere***: Every post is pure, high-grade, unadulterated Markdown.
+- ***Light and fast***: The blog would be super fast anywhere and extremely light on JavaScript.
+- ***No ads***: The blog would have no ads, anywhere, ever.
+- ***Locally testable***: The blog can be tested locally and will look and behave the same on the web.
+- ***Easy to maintain***: Adding anything to the blog, including SEO for discoverability, would be easy.
+- ***CHEAP AF***: The blog would be _stupid cheap to run_.
+- ***REPRODUCEABLE AF***: The blog would be _stupid easy_ to reproduce anywhere, any time.
+- ***CI/CD for everything***: The blog will be deployed via CI whenever I post new content.
 
 Essentially, I wanted a fast, super simple blog driven by CI and Git Flow.
 
@@ -131,7 +131,7 @@ workloads didn't make sense.
 
 # S3
 
-{{< post_image name="s3" >}}
+{{< post_image name="s3" alt="S3?" height="50%" width="50%" >}}
 
 Using AWS S3 and S3 Static Web Hosting made much more sense. Using this would
 enable me to build the blog locally, test it with Hugo and sync the files up to
@@ -154,7 +154,7 @@ a designated bucket. The only negatives with this approach are:
 
 ## Terraform all the things!
 
-{{< post_image name="terraform" >}}
+{{< post_image name="terraform" alt="Terraform?" height="50%" width="50%" >}}
 
 I could have used [AWS CloudFormation](https://aws.amazon.com/cloudformation) to
 provision all of this, but I wanted to use something that would make it easy for
@@ -167,6 +167,8 @@ interesting), and it supports just about every cloud provider out there.
 
 ## Docker all the things, too!
 
+{{< post_image name="docker" alt="Docker?" >}}
+
 I could have created provisioning scripts that install Hugo and other tools
 required to provision my blog, but why do that when I can use Docker instead?
 [Containers](https://blog.carlosnunez.me/post/a-completely-neutral-post-about-containers/)
@@ -176,6 +178,8 @@ other and run containerized tasks repeatedly. Combining the two made
 provisioning super easy!
 
 ### Docker in Docker, though.
+
+{{< post_image name="docker-in-docker" alt="Oh no, Docker in Docker!" >}}
 
 The biggest challenge with this was dealing with the Docker in Docker problem.
 While nested containers aren't bad _per se_, accessing networked services, like
@@ -194,7 +198,7 @@ Not ideal, but it works.
 
 ## Make all the things, too!
 
-{{< post_image name="make" >}}
+{{< post_image name="make" height="50%" width="50%" >}}
 
 Choosing a build runner for this code was slightly more complicated. I generally
 err to writing Bash scripts in the first instance, as I know Bash well (despite
@@ -224,7 +228,7 @@ easy to reason about and easy to import into Make and other tools.
 
 # CI/CD
 
-{{< post_image name="ci_cd" >}}
+{{< post_image name="ci_cd" alt="Jenkins != CI/CD" >}}
 
 I decided on using [Travis CI](https://travis-ci.org) for CI/CD. I've been using
 it for many years and have generally been happy with it. I like being able to
@@ -348,13 +352,13 @@ I'm pretty happy with this dogfood!
 
 # The Future
 
+{{< post_image name="the-future-is-now" >}}
+
 `blog-gen` is in really early days. I don't have a lot of confidence in it
 working for anyone but me right now. (I _do_ want people to break it, though!)
 There are a lot of things I want to improve on!
 
 ## Blue-Green Deployment
-
-{{< post_image name="blue-green" >}}
 
 I originally wanted to use blue-green deployment so that I could always have a
 "beta" version of my blog available. This would have been a good place to test
