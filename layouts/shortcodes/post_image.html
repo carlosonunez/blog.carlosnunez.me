@@ -16,6 +16,9 @@
 {{ if ( fileExists (printf "static/%s.gif" $photo_base_path) ) }}
   {{ $photo_path = (printf "%s.gif" $photo_base_path) }}
 {{ end }}
+{{ if ( fileExists (printf "static/%s.svg" $photo_base_path) ) }}
+  {{ $photo_path = (printf "%s.svg" $photo_base_path) }}
+{{ end }}
 
 <img src="{{ $photo_path }}" {{ if (.Get "height") }} height="{{ $photo_height }}"
      {{ end }}
