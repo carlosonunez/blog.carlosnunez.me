@@ -1,7 +1,6 @@
 ---
 title: "neurons are firing again! How I eat my own dogfood with my blog."
-draft: true
-date: 2019-02-06
+date: 2019-02-13 01:31:09
 slug: "neurons-are-firing-again"
 image: "/images/neurons-are-firing-again/header.jpg"
 description: >-
@@ -18,7 +17,9 @@ keywords:
 ---
 
 First, huge shout out to the five of you that actually read stuff from my
-WordPress blog! You might have noticed that, with the exception of a [a few
+WordPress blog!
+
+You might have noticed that, with the exception of a [a few
 posts](https://www.contino.io/insights/improve-your-security-posture-and-sleep-better-at-night-with-compliance-as-code)
 for [my company](https://contino.io), I've been mostly silent. I
 haven't given up on writing; quite the contrary, in fact! I haven't run out of neurons to
@@ -53,15 +54,17 @@ These were annoying, but not dealbreakers. The deal breaker that finally pushed
 me over the edge was this: I had to pay WordPress $13/month to use a custom
 domain backed by HTTPS.
 
-$13/month. "That's really not a lot, Carlos." You're right. But think about it:
+**$13/month.**
 
-- I'm paying them $13/month for what is probably a five-second change on their
+"That's really not a lot, Carlos." You're right. But think about it:
+
+- I'm paying them **$13/month** for what is probably a five-second change on their
   webserver.
 
-- I'm paying them $13/month for the (possible) privilege of using a wildcard SSL
+- I'm paying them **$13/month** for the (possible) privilege of using a wildcard SSL
   certificate, so it's not like I'm even telling readers that I own that blog.
 
-- I'm paying them $13/month because _I was too lazy to roll my own solution,
+- I'm paying them **$13/month** because _I was too lazy to roll my own solution,
   despite being perfectly capable of doing so_.
 
 It's not the money, here; it's the principle. I'm an Engineer. Why the hell am I
@@ -74,15 +77,15 @@ lighter?
 
 This was what I wanted my blog to be:
 
-- ***Powered by Git***: Every post to be version-controlled in GitHub.
-- ***Markdown everywhere***: Every post is pure, high-grade, unadulterated Markdown.
-- ***Light and fast***: The blog would be super fast anywhere and extremely light on JavaScript.
-- ***No ads***: The blog would have no ads, anywhere, ever.
-- ***Locally testable***: The blog can be tested locally and will look and behave the same on the web.
-- ***Easy to maintain***: Adding anything to the blog, including SEO for discoverability, would be easy.
-- ***CHEAP AF***: The blog would be _stupid cheap to run_.
-- ***REPRODUCEABLE AF***: The blog would be _stupid easy_ to reproduce anywhere, any time.
-- ***CI/CD for everything***: The blog will be deployed via CI whenever I post new content.
+- **Powered by Git**: Every post to be version-controlled in GitHub.
+- **Markdown everywhere**: Every post is pure, high-grade, unadulterated Markdown.
+- **Light and fast**: The blog would be super fast anywhere and extremely light on JavaScript.
+- **No ads**: The blog would have no ads, anywhere, ever.
+- **Locally testable**: The blog can be tested locally and will look and behave the same on the web.
+- **Easy to maintain**: Adding anything to the blog, including SEO for discoverability, would be easy.
+- **CHEAP AF**: The blog would be _stupid cheap to run_.
+- **REPRODUCEABLE AF**: The blog would be _stupid easy_ to reproduce anywhere, any time.
+- **CI/CD for everything**: The blog will be deployed via CI whenever I post new content.
 
 Essentially, I wanted a fast, super simple blog driven by CI and Git Flow.
 
@@ -90,7 +93,7 @@ Essentially, I wanted a fast, super simple blog driven by CI and Git Flow.
 
 {{< post_image name="hello_hugo" alt="The champ of statically generated websites" >}}
 
-I knew that Git-friendly blogs like Ghost existed, but I didn't really know the
+I knew that Git-friendly blogs like Ghost and Jekyll existed, but I didn't really know the
 landscape well. So I went looking and stumbled upon [Hugo](https://gohugo.io)
 within about 32 seconds.
 
@@ -129,9 +132,9 @@ will probably be much more useful for automated chores (like purging old
 `index.html` files since they are versioned; more later), using it for core blog
 workloads didn't make sense.
 
-# S3
+# How about S3?
 
-{{< post_image name="s3" alt="S3?" height="50%" width="50%" >}}
+{{< post_image name="s3" alt="S3?" height="30%" width="30%" >}}
 
 Using AWS S3 and S3 Static Web Hosting made much more sense. Using this would
 enable me to build the blog locally, test it with Hugo and sync the files up to
@@ -198,7 +201,7 @@ Not ideal, but it works.
 
 ## Make all the things, too!
 
-{{< post_image name="make" height="50%" width="50%" >}}
+{{< post_image name="make" height="30%" width="30%" >}}
 
 Choosing a build runner for this code was slightly more complicated. I generally
 err to writing Bash scripts in the first instance, as I know Bash well (despite
@@ -214,7 +217,7 @@ complicated](https://github.com/carlosonunez/infrastructure/tree/master/kubernet
 `Makefile`s though, so I wanted to be _really_ careful about making my Make
 structure easily readable and approachable this time. 
 
-## Handling secrets
+### Handling secrets
 
 Committing sensitive cloud provider API keys would be [pretty
 bad](https://medium.com/@selvaganesh93/what-happens-if-you-accidentally-commit-your-aws-access-token-to-public-github-be50d378b4c7).
