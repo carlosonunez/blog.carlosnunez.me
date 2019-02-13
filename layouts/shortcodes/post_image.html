@@ -20,6 +20,7 @@
   {{ $photo_path = (printf "%s.svg" $photo_base_path) }}
 {{ end }}
 
+<p></p>
 <img src="{{ $photo_path }}" {{ if (.Get "height") }} height="{{ $photo_height }}"
      {{ end }}
      {{ if (.Get "width") }}
@@ -28,3 +29,4 @@
      {{ if (.Get "alt") }}
      alt="{{ $photo_alt }}"
      {{ end }}>
+<p></p>
