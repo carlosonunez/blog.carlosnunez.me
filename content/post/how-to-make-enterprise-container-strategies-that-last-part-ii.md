@@ -248,7 +248,7 @@ connection.
 When you find your team implementing automated deployment strategies, service
 discovery features or easier ways of integrating logs from your Docker
 containers into centralized logging facilities, you are probably ready for
-[Stair 2](#stair-2).
+an orchestrator.
 
 #### Treating containers like VMs.
 
@@ -275,7 +275,7 @@ gone (if not) because _they had no idea that the container also hosted its
 database_.
 
 The desire to run multiple applications at once is usually an indicator that
-you want an orchestrator of some kind.
+you are ready for the next Stair: _multi-application containerization_.
 
 ### Alternatives
 
@@ -296,8 +296,9 @@ client. These are the default on modern Kubernetes installations.
 
 {{< post_image name="rkt" >}}
 
-[`rkt`](https://coreos.com/rkt) is a security-conscious container runtime that
-aims to address some of Docker's security pitfalls.
+[`rkt`](https://coreos.com/rkt) is a security-conscious container runtime from
+CoreOS that aims to address some of Docker's security pitfalls. Despite this
+clearly-obvious benefit, it hasn't received a lot of momentium in the community.
 
 ##### Jails, Zones, LXC containers and Canonical LXD
 
