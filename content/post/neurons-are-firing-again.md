@@ -14,6 +14,7 @@ keywords:
   - terraform
   - provisioning
   - infrastructure
+linkedin_post_url: https://www.linkedin.com/feed/update/urn:li:activity:6501464810738249729
 ---
 
 First, huge shout out to the five of you that actually read stuff from my
