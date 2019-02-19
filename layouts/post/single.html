@@ -20,6 +20,13 @@
       {{ .Content }}
     </section>
     <footer class="post-footer">
+      {{ with .Params.linkedin_post_url }}
+      <section class="linkedin-cta">
+        <span style="color: gray; font-size: 0.8rem">
+          <em>Enjoyed this article? <strong>Join the discussion on <a href="{{ . }}">LinkedIn</a>.</strong></em>
+        </span>
+      </section>
+      {{ end }}
       {{ with .Params.tags -}}
       <section class="tags post-meta">
         Tagged
