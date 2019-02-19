@@ -7,6 +7,19 @@ services:
       - "$HOME/.travis:/root/.travis"
     working_dir: /app
 
+  create-new-post:
+    image: alpine
+    volumes:
+      - "$PWD/scripts:/app"
+      - "$PWD/content/post:/content"
+      - "$PWD/static/images:/images"
+    working_dir: /work
+    environment:
+      - VERBOSE_MODE
+    entrypoint: 
+      - sh
+      - /app/create_new_post.sh
+
   deploy-blog:
     build:
       context: ${BLOG_GEN_DIRECTORY:-./https-hugo-bloggen}
