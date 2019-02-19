@@ -28,6 +28,7 @@
       </section>
       {{ end }}
       <section class="about-me">
+    <hr />
     <h1>About Me</h1>
 
     <img src="/images/me_20190114.jpg"
@@ -44,12 +45,13 @@
       money. When I'm not with my clients, I enjoy travel, writing, and visiting new
   breweries, wineries and distilleries. </em>
       </section>
-      {{ with .Params.tags -}}
+      {{ with .Params.keywords -}}
+      <p></p>
       <section class="tags post-meta">
         Tagged
         {{ range . }}
         {{- $name := . -}}
-          {{- with $.Site.GetPage "taxonomy" (printf "tags/%s" $name) | default ($.Site.GetPage "taxonomy" (printf "tags/%s" ($name | urlize))) -}}
+          {{- with $.Site.GetPage "taxonomy" (printf "keywords/%s" $name) | default ($.Site.GetPage "taxonomy" (printf "keywords/%s" ($name | urlize))) -}}
           <a href="{{ .Permalink }}">{{ $name }}</a>
           {{ end -}}
         {{ end }}
