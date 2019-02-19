@@ -22,4 +22,4 @@ Pop this into your <code>.bashrc</code> and never think about it again.<!--more-
 
 Thanks to [this](http://stackoverflow.com/questions/38859145/detect-ubuntu-on-windows-vs-native-ubuntu-from-bash-script "") StackOverflow post for the tip.
 
-{{< about_me >}}
+

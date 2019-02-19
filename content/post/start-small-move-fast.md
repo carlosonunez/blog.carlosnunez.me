@@ -39,4 +39,4 @@ What I am saying, however, is to do something like what Jerry Seinfeld did: star
 
 Finding a pain point, acting on it in a smart way and failing fast are the principal tenets of doing things the "lean" way, and you don't even need to create your own LLC to do it! In fact, to me, this is what DevOps is really about: using technology in smart ways to get business done by getting everyone on the same page.
 
-{{< about_me >}}
+

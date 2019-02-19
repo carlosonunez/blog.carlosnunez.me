@@ -37,4 +37,4 @@ The pipeline would look roughly like this:
 
 We haven't gotten this far yet, but this Vagrantfile is a good starting point.
 
-{{< about_me >}}
+

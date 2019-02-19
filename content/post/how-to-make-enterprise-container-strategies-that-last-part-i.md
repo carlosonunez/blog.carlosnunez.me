@@ -297,4 +297,4 @@ possible, and by focusing on transforming a single application and gaining
 institutional knowledge slowly, enterprises stand a better chance at creating a
 modern architecture that lasts.
 
-{{< about_me >}}
+

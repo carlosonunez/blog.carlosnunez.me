@@ -102,4 +102,4 @@ This is starting to get long and Iâ€™m in the mood for a caramel frap now, so Iâ
 
 *Did you learn something today? Did I miss something? Let me know in the comments!*
 
-{{< about_me >}}
+

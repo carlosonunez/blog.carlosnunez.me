@@ -67,4 +67,4 @@ After doing this, you'll be able to turn on dark mode by triple-clicking your ho
 
 I hope this helps you as much as it's helped me!
 
-{{< about_me >}}
+

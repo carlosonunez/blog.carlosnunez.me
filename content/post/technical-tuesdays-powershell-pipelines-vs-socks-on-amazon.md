@@ -91,4 +91,4 @@ And that's how Microsoft put the power of Amazon on your desktop!
 
 *Has the Powershell pipeline ever saved your life? Have you ever had to roll your own runspaces and lived to talk about it? (Did you know you can use runspaces to make multithreaded Powershell scripts? Not saying that *you would*...) Let's talk about it in the comments below!*
 
-{{< about_me >}}
+

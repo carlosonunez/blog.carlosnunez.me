@@ -196,4 +196,4 @@ That’s all I’ve got! I hope this helps!
 
 *Do you have another solution that works? Has this helped you size directories a lot faster than before? Let’s talk about it in the comments!*
 
-{{< about_me >}}
+

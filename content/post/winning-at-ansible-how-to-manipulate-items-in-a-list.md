@@ -101,4 +101,4 @@ This is sort-of, kind-of explained in [this](https://github.com/mitsuhiko/jinja2
 
 This is the first of a few blog posts on my experiences of using and failing at Ansible in real life. I hope that these save someone a few hours!
 
-{{< about_me >}}
+

@@ -40,4 +40,4 @@ To make matters more confusing, these days, [operating systems will often automa
 
 Concurrency and parallelism aren't the same, except when they are. Sort of.
 
-{{< about_me >}}
+

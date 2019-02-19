@@ -46,4 +46,4 @@ The key takeaways:
 
 Enjoy!
 
-{{< about_me >}}
+

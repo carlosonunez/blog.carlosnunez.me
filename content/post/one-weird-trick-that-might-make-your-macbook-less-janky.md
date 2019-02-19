@@ -25,4 +25,4 @@ If your Mac is freezing up or acting slow in general, give this a try:<!--more--
 
 Try it and let me know what you think!
 
-{{< about_me >}}
+

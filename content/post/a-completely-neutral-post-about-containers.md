@@ -114,4 +114,4 @@ With containers, you can do things like:
 
   That's mostly it! All of this can be done on localhost, and all of it is (relatively) easy.
 
-{{< about_me >}}
+

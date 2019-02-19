@@ -51,4 +51,4 @@ Do you care about the quality of your work? Do you document what you're doing to
 
 Merriam-Webster defines [passion](http://www.merriam-webster.com/thesaurus/textbook[adjective] "") as a *a strong feeling of enthusiasm or excitement for something or about doing something*. If you're passionate about what you're doing and it shows through your work, in my book, even if it pales in comparison to what it should ideally look like, you're a good engineer in my eyes. So much easier than checklists in my experience.
 
-{{< about_me >}}
+

@@ -33,4 +33,4 @@ Except it does! And for three reasons:
 
 Try it for a week. Let me know how it goes!
 
-{{< about_me >}}
+

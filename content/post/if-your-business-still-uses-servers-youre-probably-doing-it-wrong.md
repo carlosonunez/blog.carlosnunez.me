@@ -81,4 +81,4 @@ Microsoft and Google give new users $200 and $300 in credits to try their servic
 
 *What was your physical to cloud transition story? Is there anything holding you back from trying the cloud? Leave a comment below!*
 
-{{< about_me >}}
+
