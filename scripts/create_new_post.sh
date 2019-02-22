@@ -24,21 +24,21 @@ _get_post_slug() {
 }
 
 ensure_directories_present() {
-  test -d /content && \
-  test -d /images
+  test -d content && \
+  test -d static/images
 }
 
 create_images_dir_for_post() {
   post_name=$1
   post_slug=$(_get_post_slug "$post_name")
-  mkdir "/images/$post_slug"
+  mkdir "static/images/$post_slug"
 }
 
 create_new_post_with_front_matter() {
   post_name="$1"
   post_slug=$(_get_post_slug "$post_name")
   todays_date=$(date +"%Y-%m-%d %H:%M:%S")
-  cat >"/content/${post_slug}.md" <<-POST
+  cat >"content/post/${post_slug}.md" <<-POST
 ---
 title: "$post_name"
 date: "$todays_date"
@@ -56,7 +56,7 @@ POST
 
 if ! ensure_directories_present
 then
-  >&2 echo "ERROR: /content or /images should be mounted."
+  >&2 echo "ERROR: content and static/images must be present."
   exit 1
 fi
 
