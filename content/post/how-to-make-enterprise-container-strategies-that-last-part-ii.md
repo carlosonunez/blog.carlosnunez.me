@@ -23,37 +23,37 @@ keywords:
 Hello, again!
 
 In my [last
-post](https://blog.carlosnunez.me/how-to-make-enterprise-container-strategies-that-last-part-i),
+post](https://blog.carlosnunez.me/post/how-to-make-enterprise-container-strategies-that-last-part-i),
 I wrote about the perils of taking "big-bang" approaches towards adopting
 containers at scale within the enterprise. I also introduced some techniques
 teams can apply as alternatives.[^1]
 
-The next two posts follow on these talking points by introducing the "Stairs to
+The next two posts follow on these talking points by introducing the "Staircase to
 Container Maturity," an opinionated maturity ranking of popular container-enabling tools and
 platforms used by teams and companies worldwide. This post will introduce Docker
 and Docker-based orchestration platforms. The next section will focus on what
 you really want to hear about: Kubernetes and k8s-driven orchestration
 platofrms. I originally thought of putting these two sections together and
-making one big Container Stairs post, but I found myself spending so much time
+making one big Container Staircase post, but I found myself spending so much time
 on the fundamentals (Docker), I thought that splitting them up this way made
 more sense.
 
-# The Stairs to Container Maturity
+# The Container Maturity Staircase
 
 {{< post_image name="container_stairs" alt="A hopefully helpful ranking of container tech." >}}
 
-The goals of the Stairs are two-fold.
+The goals of the Staircase are two-fold.
 
-The first goal of the Stairs is to help teams that are brand-new to containers get
+The first goal of the Staircase is to help teams that are brand-new to containers get
 an idea of what an ideal journey should look like as they execute upon their
 enterprise container strategy. If you've heard of Docker but
 haven't seen or applied it in practice, or if your teams are currently
 experimenting with the tool but don't know where to go next, then you might find
-the Stairs helpful. You might find the Stairs less helpful if your team has
+the Staircase helpful. You might find the Staircase less helpful if your team has
 already been "container-native" for some time, though it could serve as a good
 gut check to reaffirm that your still heading in the right direction.
 
-The Stairs's second goal is to help engineering managers understand the
+The Staircase's second goal is to help engineering managers understand the
 "container-native" landscape to make better product and project-level decisions.
 One can think of it as a directed and container-native-specific Magic Quadrant
 of sorts. You might find this helpful if your organization is trying to decide
@@ -61,7 +61,7 @@ between multiple platforms but is having trouble making a decision.
 
 I will not provide in-depth coverage into each tool. Doing so will create a
 dangerously long and hard-to-follow post and detracts from the purpose of the
-Stairs: to help teams figure out where to go next. However, I'll provide links
+Staircase: to help teams figure out where to go next. However, I'll provide links
 containing more info so you can peruse them at your own leisure.
 
 ## Stair 0: Getting Started with Docker
@@ -178,7 +178,7 @@ ports on every host running your containerized web site becomes a massive
 chore. Imagine doing this with 1000 containers running in production!
 
 [Docker Swarm](https://docs.docker.com/engine/swarm/), which we'll discuss as we
-move up the Stairs, uses overlay networking and Layer 7 routing (i.e. "service
+move up the Staircase, uses overlay networking and Layer 7 routing (i.e. "service
 meshes") to address these concerns. However, these concerns are almost never
 concerns when developing locally.
 
@@ -592,7 +592,7 @@ from their laptops.
 # What's Next?
 
 In this post, we covered the first two stairs of the Container Platform Maturity
-Stairs, single-application containers with Docker and multi-application
+Staircase, single-application containers with Docker and multi-application
 container groups with Docker Compose. We discussed the pros and cons of each,
 and used a real-life example of these stairs at work for a real Fortune 100
 financial services provider undergoing an adoption of containers at scale for
@@ -604,13 +604,13 @@ exposed on the network and into the Internet become important. Container
 orchestration platforms provide all of these features (and more), but knowing
 whether to stick to a Docker-based orchestration platform or begin using a
 non-Docker-based platform depends on your desired outcomes. Our next post will
-discuss the next steps of the Stairs, all of which focus on container
+discuss the next steps of the Staircase, all of which focus on container
 _orchestrators_. Like this post, I will focus on a real-life example of how
 moving to orchestrators from raw Docker produced big gains for a large
 enterprise.
 
-I will wrap this series with a brief discussion of when jumping between the
-Stairs makes sense and peripheral concerns to think about that come with running
+I will wrap this series with a brief discussion of when jumping between stairs in the 
+Staircase makes sense and peripheral concerns to think about that come with running
 containers at enterprise scale.
 
 # Footnotes
