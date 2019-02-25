@@ -46,6 +46,7 @@ create_new_post_with_front_matter() {
 ---
 title: "$post_name"
 date: "$todays_date"
+draft: true
 slug: "$post_slug"
 image: "/images/$post_slug/header.jpg"
 keywords:

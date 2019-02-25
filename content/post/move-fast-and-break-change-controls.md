@@ -1,7 +1,6 @@
 ---
 title: "Move Fast And Retain Corporate Governance with Pull Requests"
 date: "2019-02-24 17:47:23"
-draft: true
 slug: "move-fast-and-retain-corp-gov-with-prs"
 image: "/images/move-fast-and-retain-corp-gov-with-prs/header.jpg"
 keywords:
