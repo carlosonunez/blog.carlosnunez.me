@@ -23,7 +23,7 @@ _get_post_slug() {
     tr -dc '[:alnum:]\n\r-'
 }
 
-ensure_directories_present() {
+ensure_that_base_directories_are_present() {
   test -d content && \
   test -d static/images
 }
@@ -32,6 +32,10 @@ create_images_dir_for_post() {
   post_name=$1
   post_slug=$(_get_post_slug "$post_name")
   mkdir "static/images/$post_slug"
+}
+
+check_if_post_already_exists() {
+  test -f "content/post/$(_get_post_slug "$post_name").md"
 }
 
 create_new_post_with_front_matter() {
@@ -54,18 +58,25 @@ keywords:
 POST
 }
 
-if ! ensure_directories_present
-then
-  >&2 echo "ERROR: content and static/images must be present."
-  exit 1
-fi
-
 post_name="$1"
 if test -z "$post_name"
 then
   usage
   >&2 echo "ERROR: Missing post name."
   exit 1
+fi
+
+
+if ! ensure_that_base_directories_are_present
+then
+  >&2 echo "ERROR: content and static/images must be present."
+  exit 1
+fi
+
+if check_if_post_already_exists "$post_name"
+then
+  >&2 echo "ERROR: Post \"$post_name\" already exists"
+  exit 2
 fi
 
 if ! {
@@ -76,3 +87,5 @@ then
   >&2 echo "ERROR: Failed to create new post."
   exit 1
 fi
+>&2 echo "INFO: Post created at: $(_get_post_slug "$post_name")"
+exit 0
