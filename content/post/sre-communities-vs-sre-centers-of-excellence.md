@@ -1,6 +1,6 @@
 ---
 title: "SRE Communities vs SRE Centers of Excellence"
-date: "2019-03-19 01:23"
+date: "2019-03-19 01:23:00"
 slug: "sre-communities-vs-sre-centers-of-excellence"
 image: "/images/sre-communities-vs-sre-centers-of-excellence/header.jpg"
 keywords:
