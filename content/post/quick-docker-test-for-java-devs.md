@@ -1,7 +1,6 @@
 ---
 title: "Is your Java app ready for Docker? Take this super quick test!"
 date: "2019-03-19 00:57:07"
-draft: true
 slug: "quick-docker-test-for-java-devs"
 keywords:
   - enterprise
