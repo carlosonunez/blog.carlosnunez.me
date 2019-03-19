@@ -47,8 +47,6 @@ will _always_ produce better outcomes and better cultures than centers of excell
 
 # Centers of Excellence Are Silos, And Silos Are Bad
 
-(_To Microsoft folk:_ Y'all are great; I just thought this picture was funny.)
-
 Centers of excellence, or "CoEs," are a good idea in theory. You recruit the best engineers
 throughout your organization into the CoE, and give them the power to not only set the tone and
 reference for how things should be done at your organization, but to also travel from team to team
