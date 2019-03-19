@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+markdown_to_lint="${1?Please provide a path to the Markdown being linted.}"
+export BLOG_GEN_DIRECTORY=/dev/null
+2>/dev/null docker-compose run --rm lint redpen \
+  -f markdown \
+  -r json \
+  "$markdown_to_lint"
