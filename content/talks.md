@@ -18,7 +18,7 @@ I also run the HashiCorp DFW meetup! [Check it out!](https://meetup.com/hashicor
 -  **December 13, 2017**. ***AWS DFW***: [Running Docker containers in AWS](https://www.meetup.com/AWS-Dallas/events/245650097/)
 -  **October 17, 2017**. ***DevOpsDays Nashville***: [On the difference between configuration management and provisioning](https://www.youtube.com/watch?v=8x9PSkNKW-4)
 
-{{< youtube 8x9PSkNKW >}}
+{{< youtube 8x9PSkNKW-4 >}}
 
 -  **August 28, 2017**. ***DevOpsDays DFW***: [On the difference between configuration management and provisioning](https://www.youtube.com/watch?v=6eayt6FXH88)
 
