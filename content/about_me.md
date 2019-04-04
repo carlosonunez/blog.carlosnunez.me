@@ -5,7 +5,7 @@ slug: "about-me"
 linktitle: "About Me"
 ---
 
-<img src="/images/me_20190114.jpg" height=45% width=45%>
+<img src="/images/me_20190404.jpg" height=45% width=45%>
 
 I'm a Cloud and Software Consultant. Brooklyn-born, Dallas-based.
 

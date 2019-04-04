@@ -25,6 +25,11 @@ googleAnalytics = "{{ .Env.HUGO_GOOGLEANALYTICS }}"
     weight = -10
 
   [[ menu.main ]]
+    identifier = "talks" name = "Talks"
+    url = "/talks"
+    weight = -9
+
+  [[ menu.main ]]
     identifier = "employer"
     name = "{{ .Env.CURRENT_EMPLOYER }}"
     url = "{{ .Env.CURRENT_EMPLOYER_URL }}"
