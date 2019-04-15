@@ -69,7 +69,7 @@ login workflow with third-party OAuth providers, namely Google and Facebook. In 
 bi-weekly story grooming session, a product owner might author a acceptance test with Cucumber that
 looks like this:
 
-```cucumber
+{{< highlight "cucumber" >}}
 # features/login/third_party_auth.feature
 Feature: Logging in with Third-Party Providers
 
@@ -84,7 +84,7 @@ Feature: Logging in with Third-Party Providers
     Then I see a button that lets me log in with Google
     And I enter the Google authentication flow once it is clicked
     And I can successfully log into our to-do app with our account
-```
+{{< / highlight >}}
 
 Ideally, these acceptance tests would live in a separate repository since they are closer to
 integration tests than service-level tests. It also makes continuous acceptance testing easier to
@@ -98,7 +98,7 @@ After Product and Engineering agree on the scope of this feature and its timing 
 Engineer might author a failing series of step definitions for this feature, one of which might look
 something like this:
 
-```ruby
+{{< highlight "ruby" >}}
 # features/step_definitions/third_party_auth.rb
 require 'todo-app'
 require 'vault'
@@ -123,7 +123,7 @@ end
 Then("I see a button that lets me log in with Google") do
   expect(page).to have_element("//button[id='google_login']")
 end
-```
+{{< / highlight >}}
 
 Once the engineer playing this story is able to make this series of step definitions pass,
 Engineering and Product can play the acceptance test end-to-end to confirm that the feature implemented
@@ -144,7 +144,7 @@ potential IPO in the future. Thus, capturing as many of the fleeting 85% is pret
 
 To that end, the Reliability team can write a acceptance test that looks like this:
 
-```cucumber
+{{< highlight "cucumber" >}}
 @reliability
 Feature: Timely logins
 
@@ -154,7 +154,7 @@ Feature: Timely logins
     Given an instance of the to-do app
     When I navigate to the login page
     Then the login page loads in five seconds or less at least ten times in succession.
-```
+{{< /highlight >}}
 
 Notice the `@reliability` tag at the top of this acceptance test. This tag is important, as it allows
 us to run our series of acceptance tests with a specific focus on reliability. Since these tests are
