@@ -1,7 +1,6 @@
 ---
 title: "Story Points Aren't Units of Time"
 date: "2019-07-16 23:45:29"
-draft: true
 slug: "story-points-arent-units-of-time"
 image: "/images/story-points-arent-units-of-time/header.jpg"
 keywords:
