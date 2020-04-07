@@ -58,6 +58,12 @@ keywords:
 POST
 }
 
+if [ "$1" == '-h' ] || [ "$1" == '--help' ]
+then
+  usage
+  exit 0
+fi
+
 post_name="$1"
 if test -z "$post_name"
 then
