@@ -1,7 +1,6 @@
 ---
 title: "A few tips on successful remote value stream maps."
 date: "2020-04-07 17:18:19"
-draft: true
 slug: "a-few-tips-on-successful-remote-value-stream-maps"
 image: "/images/a-few-tips-on-successful-remote-value-stream-maps/header.jpg"
 keywords:
