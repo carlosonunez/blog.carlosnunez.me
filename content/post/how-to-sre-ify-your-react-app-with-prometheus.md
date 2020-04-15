@@ -22,6 +22,7 @@ keywords:
   - express
   - nodejs
   - node
+  - create-react-app
 ---
 
 I am not a JavaScript developer. However, I was given a task [at work](https://contino.io)
@@ -43,7 +44,7 @@ starting the Express web server for you, it doesn't provide a whole lot in the w
 configuring that server.
 
 I spent several hours figuring out how to get React and Prom talking to each other
-(and finding surprisingly little in instrumenting a React app wtih Prom). I succeeded! It was
+(and finding surprisingly little in instrumenting a React app with Prom). I succeeded! It was
 WAY easier than I thought.
 
 I hope this blog post saves you hours of pain. Apologies for any JavaScript errors or misgivings;
