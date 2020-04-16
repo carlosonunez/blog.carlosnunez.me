@@ -3,6 +3,7 @@ title: "How to SRE-ify your React app with Prometheus"
 date: "2020-04-14 20:41:34"
 slug: "how-to-sre-ify-your-react-app-with-prometheus"
 image: "/images/how-to-sre-ify-your-react-app-with-prometheus/header.jpg"
+description: "Up your monitoring game by hooking up React with Prometheus in a few easy steps."
 keywords:
   - enterprise
   - strategy

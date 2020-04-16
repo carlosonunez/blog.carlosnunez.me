@@ -3,6 +3,7 @@ title: "A few tips on successful remote value stream maps."
 date: "2020-04-07 17:18:19"
 slug: "a-few-tips-on-successful-remote-value-stream-maps"
 image: "/images/a-few-tips-on-successful-remote-value-stream-maps/header.jpg"
+description: "Don't let coronavirus slow your 2020 digital transformation! Here's a quick blog post on how to hold winning value stream mapping sessions while remote."
 keywords:
   - enterprise
   - strategy
