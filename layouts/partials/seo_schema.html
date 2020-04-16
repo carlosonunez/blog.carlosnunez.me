@@ -5,6 +5,15 @@
 <meta name="KEYWORDS" content="{{ .Site.Params.Keywords }},writing">
 {{ end }}
 {{ end }}
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ .Permalink }}" />
+{{ if not (.IsHome) }}
+<meta property="og:image" content="https://{{ .Permalink }}header.jpg" />
+{{ end }}
+<meta property="og:description" content="{{ if .Description }}{{ .Description }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ else }}{{ if .IsHome }}Rambings on DevOps, software and hopefully techy things.{{ end }}{{ end }}{{ end }}" />
+<meta name="description" content="{{ if .Description }}{{ .Description }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ end }}{{ end }}" />
+<meta name="author" content="{{ .Site.Params.Author }}" />
+
 <script type="application/ld+json">
 {
     "@context" : "http://schema.org",
@@ -31,3 +40,4 @@
     "keywords" : [ {{ if isset .Params "keywords" }}{{ range .Params.keywords }}"{{ . }}",{{ end }}{{ end }}"Blog" ]
 }
 </script>
+
