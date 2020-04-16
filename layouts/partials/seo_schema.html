@@ -7,8 +7,10 @@
 {{ end }}
 <meta property="og:type" content="website" />
 <meta property="og:url" content="{{ .Permalink }}" />
+<meta property="og:site_name" content="Neurons firing on a keyboard." />
+<meta property="og:email" content="dev@carlosnunez.me" />
 {{ if not (.IsHome) }}
-<meta property="og:image" content="https://{{ replace .Permalink "/post/" "/images/" }}header.jpg" />
+<meta property="og:image" content="{{ replace .Permalink "/post/" "/images/" }}header.jpg" />
 {{ end }}
 <meta property="og:description" content="{{ if .Description }}{{ .Description }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ else }}{{ if .IsHome }}Rambings on DevOps, software and hopefully techy things.{{ end }}{{ end }}{{ end }}" />
 <meta name="description" content="{{ if .Description }}{{ .Description }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ else }}{{ if .IsHome }}Rambings on DevOps, software and hopefully techy things.{{ end }}{{ end }}{{ end }}" />

@@ -37,4 +37,6 @@
     <link rel="stylesheet" href="{{ "/css/" | relURL }}{{ . }}">
     {{ end }}
     <meta name="google-site-verification" content="{{ .Site.Params.GoogleSearchVerificationCode }}" />
+    {{ partial "seo_schema" . }}
+    {{ template "_internal/google_analytics_async.html" . }}
 </head>
