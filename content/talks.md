@@ -14,6 +14,10 @@ Want me to talk at your event? E-mail me at [dev@carlosnunez.me](mailto:dev@carl
 
 I also run the HashiCorp DFW meetup! [Check it out!](https://meetup.com/hashicorpdfw)
 
+-  **April 24, 2020**. ***Contino CloudFest***: [Boost Your Apps with an SRE Approach to Development](https://www.youtube.com/watch?v=buqz_4LK57c)
+
+{{< youtube buqz_4LK57c >}}
+
 -  **October 4, 2018**. ***Taco About It***: [Getting Into DevOps](https://www.linkedin.com/feed/update/urn:li:activity:6455463206302343168)
 -  **December 13, 2017**. ***AWS DFW***: [Running Docker containers in AWS](https://www.meetup.com/AWS-Dallas/events/245650097/)
 -  **October 17, 2017**. ***DevOpsDays Nashville***: [On the difference between configuration management and provisioning](https://www.youtube.com/watch?v=8x9PSkNKW-4)
