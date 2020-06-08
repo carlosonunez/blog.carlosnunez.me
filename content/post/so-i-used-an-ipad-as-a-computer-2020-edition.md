@@ -21,3 +21,7 @@ Random thoughts about my experience:
 - Keyboard is cramped af with the 11. Need to see if 12.9 is better...but afraid that it's too big
 - Screen is really REALLY sharp and pretty readable.
 - LOVING the trackpad on this thing.
+- THIS PENCIL HAS AN ERASER!
+- Screen tilt is really nice. I love the dual-hinge solution they came up with (one hinge
+  to open the iPad clamshell; another to lift and tilt the iPad almost like an iMac monitor.
+- I'm also afraid of dropping this because it's so tiny on my lap.
