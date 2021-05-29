@@ -1,6 +1,6 @@
 ---
 title: Talks I've Given
-date: "2019-04-04"
+date: "2021-05-28"
 slug: "talks"
 linktitle: "Talks"
 ---
@@ -12,8 +12,7 @@ done.
 
 Want me to talk at your event? E-mail me at [dev@carlosnunez.me](mailto:dev@carlosnunez.me)!
 
-I also run the HashiCorp DFW meetup! [Check it out!](https://meetup.com/hashicorpdfw)
-
+-  **May 28, 2021**. ***DockerCon Live 2021***: [Panelist on Easy CI with Docker (free login required)](https://docker.events.cube365.net/dockercon-live/2021/content/Videos/YGDKB2wnaiRBh9mjt)
 -  **April 24, 2020**. ***Contino CloudFest***: [Boost Your Apps with an SRE Approach to Development](https://www.youtube.com/watch?v=buqz_4LK57c)
 
 {{< youtube buqz_4LK57c >}}
