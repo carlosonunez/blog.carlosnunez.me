@@ -27,6 +27,7 @@ jobs:
           cd blog-gen &&
           rm -rf static config.toml.tmpl &&
           mkdir content &&
+          cp ../.env . &&
           cp -frv ../static/ static &&
           cp -frv ../content/* content/ &&
           cp -frv ../layouts/* layouts/ &&
@@ -34,4 +35,4 @@ jobs:
       - name: Deploy the blog
         run:
           cd blog-gen &&
-          ENV_FILE=../.env COMMIT_SHA=$(GIT_DIR=$(realpath ..)/.git git rev-parse HEAD | head -c8) make deploy
+          COMMIT_SHA=$(GIT_DIR=$(realpath ..)/.git git rev-parse HEAD | head -c8) make deploy
