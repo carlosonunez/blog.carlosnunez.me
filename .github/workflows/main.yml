@@ -1,0 +1,31 @@
+---
+name: Deploy Carlos's Blog
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Decrypt environment file
+        run: ./docker-compose -f docker-compose.ci.yml run --rm decrypt-env
+        env:
+          ENV_PASSWORD: ${{ secrets.env_file_encryption_key }}
+      - name: Fetch the latest version of https-hugo-bloggen
+        run:
+          - git clone https://github.com/carlosonunez/https-hugo-bloggen blog-gen
+      - name: Merge our blog with blog-gen
+        run:
+          - cd blog-gen
+          - rm -rf static config.toml.tmpl
+          - mkdir content
+          - cp -frv ../static/ static
+          - cp -frv ../content/* content/
+          - cp -frv ../layouts/* layouts/
+          - cp ../config.toml.tmpl config.toml.tmpl
+      - name: Deploy the blog
+        run:
+          - cd blog-gen
+          - COMMIT_SHA=$(git rev-parse HEAD | head -c8) make deploy

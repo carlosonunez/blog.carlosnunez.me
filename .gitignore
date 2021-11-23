@@ -18,3 +18,7 @@ config.toml
 
 # Don't commit any docx files.
 *.docx
+
+# Don't commit blog-gen when testing
+blog-gen/
+bloggen/
