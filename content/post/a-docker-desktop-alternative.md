@@ -148,3 +148,40 @@ While you'd have to do this with Docker Desktop anyway, it's a little more
 involved than going through a GUI (which is great if you're like me
 and hate GUIs anyway!).
 
+### Using an M1 Mac? You'll need to explicitly specify your default architecture
+
+While this VM supports running ARM and Intel Docker containers, the Docker CLI
+always assumes that all containers are AMD64 by default..._unless you're using
+Docker Desktop_.
+
+To work around this, simply add this to your `.bashrc` or `.bash_profile`:
+
+```sh
+export DOCKER_DEFAULT_PLATFORM="linux/arm64"
+```
+
+then log out and back in.
+
+## But what if I _really really really_ want a GUI?
+
+Then give [Portainer](https://github.com/portainer/portainer) a try!
+
+{{< post_image name="portainer" alt="Portainer!" >}}
+
+Portainer is a full-fledged GUI for Docker, Docker Swarm, and Kubernetes. It
+runs in your browser and gives you most of the functionality that you'd
+get from running Desktop.
+
+To run Portainer, simply run:
+
+```sh
+docker run -d \
+  -p 8000:8000 -p 9443:9443 \
+  --name portainer \
+  --restart=always \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v portainer_data:/data \
+  cr.portainer.io/portainer/portainer-ce:2.9.3
+```
+
+Then visit https://localhost:9443 and follow the instructions!
