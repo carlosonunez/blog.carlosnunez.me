@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM alpine
 MAINTAINER Carlos Nunez <dev@carlosnunez.me>
-
-RUN apt-get -y update && apt-get -y install gnupg zip
+RUN apk update
+RUN apk add gnupg
