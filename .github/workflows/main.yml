@@ -19,20 +19,8 @@ jobs:
         run: ./docker-compose -f docker-compose.ci.yml run --rm decrypt-env
         env:
           ENV_PASSWORD: ${{ secrets.env_file_encryption_key }}
-      - name: Fetch the latest version of https-hugo-bloggen
+      - name: Fetch the latest version of blog-gen
         run: >-
           git clone https://github.com/carlosonunez/https-hugo-bloggen blog-gen
-      - name: Merge our blog with blog-gen
-        run: >-
-          cd blog-gen &&
-          rm -rf static config.toml.tmpl &&
-          mkdir content &&
-          cp ../.env . &&
-          cp -frv ../static/ static &&
-          cp -frv ../content/* content/ &&
-          cp -frv ../layouts/* layouts/ &&
-          cp ../config.toml.tmpl config.toml.tmpl
       - name: Deploy the blog
-        run:
-          cd blog-gen &&
-          COMMIT_SHA=$(GIT_DIR=$(realpath ..)/.git git rev-parse HEAD | head -c8) make deploy
+        run: ./blog-gen/scripts/deploy.sh

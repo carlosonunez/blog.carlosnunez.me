@@ -22,3 +22,4 @@ config.toml
 # Don't commit blog-gen when testing
 blog-gen/
 bloggen/
+blog-gen
