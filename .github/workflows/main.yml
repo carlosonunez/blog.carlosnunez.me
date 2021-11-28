@@ -23,4 +23,4 @@ jobs:
         run: >-
           git clone -b v2.0.0 https://github.com/carlosonunez/https-hugo-bloggen blog-gen
       - name: Deploy the blog
-        run: ./blog-gen/scripts/deploy.sh
+        run: ./blog-gen/scripts/deploy
