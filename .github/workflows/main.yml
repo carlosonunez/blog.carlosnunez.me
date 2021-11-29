@@ -25,4 +25,6 @@ jobs:
         run: >-
           git clone -b "v${BLOG_GEN_VERSION}" https://github.com/carlosonunez/https-hugo-bloggen blog-gen
       - name: Deploy the blog
-        run: ./blog-gen/scripts/deploy
+        run: >-
+          ls ./blog-gen/infrastructure/aws
+          ./blog-gen/scripts/deploy
