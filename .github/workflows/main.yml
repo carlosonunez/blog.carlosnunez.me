@@ -23,6 +23,6 @@ jobs:
         env:
           BLOG_GEN_VERSION: f7053dd5128bcf07a70c3dc233c644ab774e9459
         run: >-
-          git clone -b "v${BLOG_GEN_VERSION}" https://github.com/carlosonunez/https-hugo-bloggen blog-gen
+          git clone -b "${BLOG_GEN_VERSION}" https://github.com/carlosonunez/https-hugo-bloggen blog-gen
       - name: Deploy the blog
         run: ./blog-gen/scripts/deploy
