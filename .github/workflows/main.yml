@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main
+inputs:
+  bloggenVersion:
+    description: "The version of carlosonunez/https-hugo-bloggen to use"
+    default: "2.0.2"
+    required: true
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -23,6 +28,6 @@ jobs:
         env:
           BLOG_GEN_VERSION: 2.0.2
         run: >-
-          git clone -b "v${BLOG_GEN_VERSION}" https://github.com/carlosonunez/https-hugo-bloggen blog-gen
+          git clone -b "v${INPUT_bloggenVersion}" https://github.com/carlosonunez/https-hugo-bloggen blog-gen
       - name: Deploy the blog
         run: ./blog-gen/scripts/deploy
