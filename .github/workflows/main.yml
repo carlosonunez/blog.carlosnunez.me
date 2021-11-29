@@ -4,11 +4,6 @@ on:
   push:
     branches:
       - main
-inputs:
-  bloggenVersion:
-    description: "The version of carlosonunez/https-hugo-bloggen to use"
-    default: "2.0.2"
-    required: true
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -26,8 +21,8 @@ jobs:
           ENV_PASSWORD: ${{ secrets.env_file_encryption_key }}
       - name: Fetch blog-gen
         env:
-          BLOG_GEN_VERSION: 2.0.2
+          BLOG_GEN_VERSION: f7053dd5128bcf07a70c3dc233c644ab774e9459
         run: >-
-          git clone -b "v${INPUT_bloggenVersion}" https://github.com/carlosonunez/https-hugo-bloggen blog-gen
+          git clone -b "v${BLOG_GEN_VERSION}" https://github.com/carlosonunez/https-hugo-bloggen blog-gen
       - name: Deploy the blog
         run: ./blog-gen/scripts/deploy
