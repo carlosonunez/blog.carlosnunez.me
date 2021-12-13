@@ -1,11 +1,11 @@
 ---
 title: I'm Carlos!
-date: "2021-05-28"
+date: "2021-12-12"
 slug: "about-me"
 linktitle: "About Me"
 ---
 
-<img src="/images/me_20200312.jpg" height=45% width=45%>
+<img src="/images/me_20211001.jpg" height=45% width=45%>
 
 I'm a Cloud and Software Consultant. Brooklyn-born, Houston-based.
 
