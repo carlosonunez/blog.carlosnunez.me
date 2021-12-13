@@ -21,7 +21,7 @@ jobs:
           ENV_PASSWORD: ${{ secrets.env_file_encryption_key }}
       - name: Fetch blog-gen
         env:
-          BLOG_GEN_VERSION: 2.0.3
+          BLOG_GEN_VERSION: 2.0.4
         run: >-
           git clone -b "v${BLOG_GEN_VERSION}" https://github.com/carlosonunez/https-hugo-bloggen blog-gen
       - name: Deploy the blog
