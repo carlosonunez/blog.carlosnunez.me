@@ -14,6 +14,23 @@ keywords:
   - docker
 ---
 
+> ## UPDATE 2021-12-28 16:54:00 CST
+>
+> If you're getting weird networking or security errors from your Docker
+> containers, your VM's time might need to be updated. You can fix this
+> by running this command:
+>
+> `docker run --rm --privileged alpine hwclock -s`
+>
+> You're probably not going to want to run this manually every time
+> your time goes out of sync. Run this automatically by adding this command
+> to your computer's `crontab`:
+>
+> ```sh
+> echo '0 * * * * docker run --rm --privileged alpine hwclock -s` > \
+>   /etc/crontabs/root
+> ```
+
 In August, Docker/Mirantis has changed their [licensing
 model](https://www.docker.com/blog/updating-product-subscriptions/) to require
 businesses with more than 250 employees and $10M in revenue to pay for Docker Desktop.
