@@ -1,8 +1,6 @@
 ---
-title: "Zero-stress way of scraping with Chromium on AWS Lambda without becoming
-a JavaScript full-stack dev"
+title: "Scraping without JavaScript using Chromium on AWS Lambda: The Novel"
 date: "2022-01-10 22:07:00"
-draft: true
 slug: "scraping-chromium-lambda-nodeless-zerostress"
 keywords:
   - deep dives
@@ -32,7 +30,7 @@ time!
   loading the AWS Lambda Runtime Interface Client correctly; see the link above
   for more.
 - Ensure that Chromium is started with these flags: `--single-process`,
-  `--disable-gpu`, `--disable-dev-shm-usage`
+  `--disable-gpu`, `--disable-dev-shm-usage`, `--no-sandbox`
 
 ## Setting the Scene
 
@@ -455,4 +453,91 @@ Why does a Docker container that works locally not work in Lambda? The whole
 point of Docker is to obtain consistent behavior regardless of where the
 container's running! This doesn't make any sense!
 
-This is where I'm at now.
+Since there isn't an easy way to SSH into a Lambda instance to debug
+Chromium directly, one (slow) way to debug this would be to create a simple
+function that simply invokes `chromium` with the same flags that Selenium
+uses, like this:
+
+```ruby
+# my_app.rb
+# Rest of the code
+def test_chromium
+  args = CHROMIUM_ARGS.map { |arg| arg.prepend('--') }
+                      .map { |arg| arg.gsub('----', '--') }
+                      .join(' ')
+  output = `2>&1 chromium #{args} https://example.website`
+  rc = $CHILD_STATUS
+  { statusCode: 200, body: { message: "rc: #{rc}, opts: #{args}, output: #{output}" }.to_json }
+end 
+```
+
+...and then in `serverless.yml`:
+
+```yaml
+provider:
+  name: aws
+  runtime: ruby2.7
+  region: us-east-2
+  deploymentBucket:
+    name: my-serverless-bucket
+  deploymentPrefix: serverless
+  # This is what tells Serverless about what images to build.
+  # It even builds them for you...kind of. More on that later.
+  ecr:
+    images:
+      app:
+        path: .
+  functions:
+    debug_chromium:
+      image:
+        name: app
+        command: my_app.test_chromium
+    my_function:
+      image:
+        name: app
+        command: my-app.my_function
+      events:
+        - http:
+            path: myApp
+            method: get
+```
+
+Upon doing this, I (okay, IT WAS ME ALL ALONG!) found that Chromium was
+crashing due to this error:
+
+```
+[35941:0821/171720.038162:FATAL:gpu_data_manager_impl_private.cc(415)] GPU process isn't usable. Goodbye.
+```
+
+This is odd, given that Docker containers don't normally gain access to GPUs
+unless you use `--privileged` or manually specify its capabilities. As it
+happens, the Chromium team [all but
+deprecated](https://support.google.com/chrome/thread/41722791/google-chrome-81-0-4044-122-remote-not-starting?hl=en)
+the `--disable-gpu` switch (to improve performance), so Chromium will try
+to find a usable GPU on startup anyway.
+
+For reasons unclear to me, the only way around this is to use the
+`--single-process` switch. (The reasons are unclear to me because
+the [docs](https://www.chromium.org/developers/design-documents/process-models)
+make it clear that the browser and the GPU run in a single process, but
+I would think that this would still require a GPU to be present, which would
+force the check that's failing.) Once I added that to my list of flags, the
+crashes stopped and rendering worked once again!
+
+## Lessons Learned
+
+This was a heck of a journey. It took me days to work through all of this, and
+there were several moments where I contemplated giving up on using Lambda for
+web scraping like this. However, just like a steep climb on a bike ride or a
+super heavy lift, finishing is always worth the struggle.
+
+Here's what I learned from all of this:
+
+- Getting Chromium working on Lambda is a gigantic pain in the rear.
+- The _only_ way to get this working with the least amount of pain and without
+  picking up JavaScript is to run Docker containers inside of Lambda and roll
+  your own base images.
+- Make sure that your function uses at least 2GB RAM. (Anything less will cause
+  random timeouts.)
+- Also make sure that you use `--no-sandbox`, `--disable-dev-shm-usage`,
+  `--disable-gpu`, and `--single-process`.
