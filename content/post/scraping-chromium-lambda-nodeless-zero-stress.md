@@ -119,15 +119,15 @@ In December 2020, AWS
 [announced](https://aws.amazon.com/blogs/aws/new-for-aws-lambda-container-image-support/)
 support for running Docker containers from [OCI](https://opencontainers.org/)
 images hosted in AWS Elastic Container Registry (ECR) inside of Lambda.
-Moreover, Lambda supports Docker images up to 20GB large, which is fit for just
+Moreover, Lambda supports Docker images up to 20GB, which is fit for just
 about anything!
 
 The power and ephemerality of Lambda with the flexibility of Docker. Best of
-both worlds, and, most importantly, a perfect fit for this exact problem!
+both worlds, and, most importantly, a perfect solution for this exact problem!
 
 ## Let's do it!
 
-~I~ Our imaginary developer loves to use [Serverless
+~~I~~ Our imaginary developer loves to use [Serverless
 Framework](https://serverless.io) for doing anything with AWS Lambda, Azure
 Functions, or any of the serverless platforms out there. Let's use that in our
 micro-tutorial here.
