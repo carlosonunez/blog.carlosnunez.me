@@ -45,7 +45,7 @@ sometime in 2020 because the web moves on [while PhantomJS did
 not](https://groups.google.com/g/phantomjs/c/9aI5d-LDuNE).
 
 Next, let's assume that you wrote [a non-JavaScript 
-app](https://github.com/carlosonunez/travel-update-bot) to scrape your favorite.
+app](https://github.com/carlosonunez/travel-update-bot) to scrape that website.
 That app ran on AWS Lambda via API Gateway so that you could use it conveniently
 by way of your favorite web browser or iOS Shortcut. When PhantomJS stopped
 working, so, too, did your app and its creature comforts.
@@ -94,7 +94,7 @@ Some projects, such as
 [`chrome-aws-lambda`](https://github.com/alixaxel/chrome-aws-lambda), a popular
 package for NodeJS that simplifies all of this (more on that later), vendor a
 special build of Chrome with lots of stuff removed compressed with
-[Google Brotli](https://github.com/google/brotli). This nets you a ~46MB binary
+[Google Brotli](https://github.com/google/brotli). This nets you a ~46MB archive
 that fits nicely into the Lambda runtime with some space left over for other
 stuff.
 
