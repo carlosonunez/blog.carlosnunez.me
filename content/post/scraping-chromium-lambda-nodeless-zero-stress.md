@@ -15,6 +15,41 @@ keywords:
   - serverless
 ---
 
+## UPDATE: 2022-01-15 16:43 CST
+
+It appears that Docker as configured within the runners provided by GitHub
+Actions do not native support building ARM images. However, you can use
+`qemu-user-static` to emulate instructions for other CPU architectures to get
+around this. This image uses
+[`binfmt_misc`](https://en.wikipedia.org/wiki/Binfmt_misc) to tell the host's
+Linux kernel to tell a third-party application (in this case, `qemu`) to execute
+binaries in formats that it doesn't recognize.
+
+In our case, we are using `qemu` to tell the `x86_64` GitHub Actions hosts to
+send executables built for `arm64` or `aarch64` to `qemu` to run in a
+virtualized environment.
+
+You can see this behavior happen
+[here](https://github.com/multiarch/qemu-user-static/blob/master/containers/latest/register.sh#L23).
+
+It is definitely slower, but it is fairly reliable!
+
+To enable this functionality, do the following:
+
+1. Add `binfmt_misc` and `qemu-user-static` to your Docker image. With an
+   Ubuntu or Debian base image, you'd add this to your `Dockerfile`:
+
+   ```dockerfile
+   RUN apt -y install qemu binfmt-support qemu-user-static
+   ```
+
+2. **Before** you build your `arm64` Docker image, add this command to your
+    deploy script to enable this translation:
+
+    ```sh
+    docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+    ```
+
 ## TL;DR
 
 At >1,700 words, this is a _long_ post. Here's a summary if you're short on
@@ -523,6 +558,110 @@ make it clear that the browser and the GPU run in a single process, but
 I would think that this would still require a GPU to be present, which would
 force the check that's failing.) Once I added that to my list of flags, the
 crashes stopped and rendering worked once again!
+
+## THE FINAL BOSS: mismatched architectures
+
+Now that our app is working, since we intend on ~~never scraping websites
+again~~ updating this app when our website changes, we want to have CI that
+deploys our function:
+
+```yaml
+# .github/workflows/main.yml
+---
+name: Deploy function
+on:
+  schedule:
+    - cron: "0 13 * * *"
+
+jobs:
+  sanity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Deploy!
+        run: >-
+          docker run --rm carlosnunez/serverless:v2.69.1 \
+            -v $PWD:/app \
+            -w /app \
+            -e ARCHITECTURE=linux/arm64 \
+            serverless deploy 
+```
+
+You commit the workflow, push, then set and forget...until GitHub tells you
+that it failed.
+
+{{< post_image name="github-actions-failure" height="30%" >}}
+
+After quickly going into your Terminal to see what happened, you see this
+in your CloudWatch logs:
+
+```
+exec format error
+```
+
+Welp.
+
+At this point we know that our computer and our Lambda function are
+both running on ARM CPUs. However, GitHub Actions
+[only provides `x86_64`
+runners](https://github.community/t/does-github-actions-cloud-allow-running-of-arm-based-instances/119319/5).
+Consequently, because of this code snippet in our Dockerfile:
+
+```dockerfile
+# Dockerfile
+FROM ruby:2.7-alpine3.15
+ENV AWS_LAMBDA_RIE_URL_ARM64=https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie-arm64
+ENV AWS_LAMBDA_RIE_URL_AMD64=https://github.com/aws/aws-lambda-runtime-interface-emulator/releases/latest/download/aws-lambda-rie
+
+# Rest of code
+
+RUN if uname -m | grep -Eiq 'arm|aarch'; \
+    then curl -Lo /usr/local/bin/aws_lambda_rie "$AWS_LAMBDA_RIE_URL_ARM64"; \
+    else curl -Lo /usr/local/bin/aws_lambda_rie "$AWS_LAMBDA_RIE_URL_AMD64"; \
+    fi && chmod +x /usr/local/bin/aws_lambda_rie
+```
+
+The architecture of our Lambda Runtime Client depends on the architecture
+of the Docker container that built it. By default, Docker will create
+containers with the same platform as their host. (It
+[is
+possible](https://blog.carlosnunez.me/post/docker-desktop-alternative-for-mac/)
+to run Docker containers with other platforms, but it's not the default
+behavior.) When you build images manually with `docker build`, you can
+work around this by providing the `--platform` option:
+
+```sh
+docker build --platform linux/arm64 ...
+```
+
+Fortunately, Serverless also supports this flag:
+
+```yaml
+# rest of config
+  ecr:
+    images:
+      app:
+        platform: linux/arm64
+        path: .
+```
+
+So to work around this, we can change our platform to be
+an environment variable:
+
+```yaml
+# serverless.yml
+
+# rest of config
+  ecr:
+    images:
+      app:
+        platform: "${env:ARCHITECTURE}"
+        path: .
+```
+
+Then modify our CI to 
+
 
 ## Lessons Learned
 
