@@ -15,40 +15,46 @@ keywords:
   - serverless
 ---
 
+## UPDATE: 2022-01-17 16:33 CST
+
+Forget the below. [Just do
+this](../run-arm-docker-images-in-github-actions-runners)
+instead!
+
 ## UPDATE: 2022-01-15 16:43 CST
 
-It appears that Docker as configured within the runners provided by GitHub
+~~It appears that Docker as configured within the runners provided by GitHub
 Actions do not native support building ARM images. However, you can use
 `qemu-user-static` to emulate instructions for other CPU architectures to get
 around this. This image uses
 [`binfmt_misc`](https://en.wikipedia.org/wiki/Binfmt_misc) to tell the host's
 Linux kernel to tell a third-party application (in this case, `qemu`) to execute
-binaries in formats that it doesn't recognize.
+binaries in formats that it doesn't recognize.~~
 
-In our case, we are using `qemu` to tell the `x86_64` GitHub Actions hosts to
+~~In our case, we are using `qemu` to tell the `x86_64` GitHub Actions hosts to
 send executables built for `arm64` or `aarch64` to `qemu` to run in a
-virtualized environment.
+virtualized environment.~~
 
-You can see this behavior happen
-[here](https://github.com/multiarch/qemu-user-static/blob/master/containers/latest/register.sh#L23).
+~~You can see this behavior happen
+[here](https://github.com/multiarch/qemu-user-static/blob/master/containers/latest/register.sh#L23)~~.
 
-It is definitely slower, but it is fairly reliable!
+~~It is definitely slower, but it is fairly reliable!~~
 
-To enable this functionality, do the following:
+~~To enable this functionality, do the following:~~
 
-1. Add `binfmt_misc` and `qemu-user-static` to your Docker image. With an
-   Ubuntu or Debian base image, you'd add this to your `Dockerfile`:
+~~1. Add `binfmt_misc` and `qemu-user-static` to your Docker image. With an~~
+~~   Ubuntu or Debian base image, you'd add this to your `Dockerfile`:~~
 
-   ```dockerfile
-   RUN apt -y install qemu binfmt-support qemu-user-static
-   ```
+   ~~```dockerfile~~
+   ~~RUN apt -y install qemu binfmt-support qemu-user-static~~
+   ~~```~~
 
-2. **Before** you build your `arm64` Docker image, add this command to your
-    deploy script to enable this translation:
+~~2. **Before** you build your `arm64` Docker image, add this command to your~~
+~~    deploy script to enable this translation:~~
 
-    ```sh
-    docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-    ```
+  ~~```sh~~
+  ~~docker run --rm --privileged multiarch/qemu-user-static --reset -p yes~~
+  ~~```~~
 
 ## TL;DR
 
