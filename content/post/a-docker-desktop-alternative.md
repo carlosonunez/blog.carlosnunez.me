@@ -97,6 +97,9 @@ curl -sSLo $HOME/lima_machines/docker.yaml \
 Since we're pointing to the `main` branch of my `bash-dotfiles` repository and
 I use Docker almost every day, this file will always be current. 😊
 
+Next, open that file in your favorite editor and replace as instructed by the
+comments.
+
 Let's now start our Docker VM:
 
 ```sh
