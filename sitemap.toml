@@ -5,6 +5,12 @@
   weight = -10
 
 [[ menu.main ]]
+  identifier = "retros"
+  name = "Retrospectives"
+  url = "{{ .Env.RETROSPECTIVES_URL }}"
+  weight = -9
+
+[[ menu.main ]]
   identifier = "talks"
   name = "Talks"
   url = "/talks"
