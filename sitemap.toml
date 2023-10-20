@@ -13,7 +13,7 @@
 [[ menu.main ]]
   identifier = "talks"
   name = "Talks"
-  url = "/talks"
+  url = "https://carlosnunez.me/talks"
   weight = -9
 
 [[ menu.main ]]
