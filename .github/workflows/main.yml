@@ -1,5 +1,5 @@
 ---
-name: Deploy Carlos's Blog
+name: Deploy carlosnunez.me
 on:
   push:
     branches:
@@ -13,18 +13,18 @@ jobs:
         run: curl -L ${DOCKER_COMPOSE_URL}/docker-compose-`uname -s`-`uname -m` > ./docker-compose &&
           chmod +x ./docker-compose
         env:
-          DOCKER_COMPOSE_URL: https://github.com/docker/compose/releases/download/1.29.0
+          DOCKER_COMPOSE_URL: https://github.com/docker/compose/releases/download/v2.2.3
 
       - name: Fetch blog-gen
         env:
-          BLOG_GEN_VERSION: 2.0.9
+          BLOG_GEN_VERSION: 2.2.0
         run: >-
-          make fetch_blog_gen
+          git clone -b "v${BLOG_GEN_VERSION}" https://github.com/carlosonunez/https-hugo-bloggen blog-gen
 
       - name: Decrypt environment file
-        run: make decrypt_env
+        run: ./blog-gen/scripts/decrypt_env.sh
         env:
           ENV_PASSWORD: ${{ secrets.env_file_encryption_key }}
 
       - name: Deploy the blog
-        run: make deploy
+        run: ./blog-gen/scripts/deploy

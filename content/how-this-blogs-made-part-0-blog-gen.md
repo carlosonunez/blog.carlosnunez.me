@@ -11,7 +11,7 @@ tags:
   - automation
 ---
 
-{{< figure src="/static/images/how-this-blogs-made/meta.png" >}}
+{{< post_image name="meta" alt="A blog post about this blog." >}}
 
 I've been writing about techy stuff in this blog for a surprisingly long time!
 This blog and I have grown together in a sort of ways.
@@ -49,7 +49,7 @@ in fact, a good idea.
 
 ## My Blog's Growth
 
-{{< figure src="/static/images/how-this-blogs-made/growth.png" >}}
+{{< post_image name="growth" >}}
 
 This blog originally [started its
 life](https://www.linkedin.com/pulse/five-reasons-why-you-need-windows-10-your-life-right-now-carlos-nunez/?trackingId=Q7Lbhcu6QzK9YcPT6SIbeQ%3D%3D)
@@ -78,7 +78,7 @@ Terraform to deploy the site into AWS.
 
 ## DRY
 
-{{< figure src="/static/images/how-this-blogs-made/dry.png" >}}
+{{< post_image name="dry" >}}
 
 I'm a huge advocate of [Don't Repeat
 Yourself](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself0. I'll usually
@@ -106,7 +106,7 @@ is the _real_ topic of this post. (Thanks for reading this far!)
 I'm going to spend the next few posts talking about how I use `blog-gen` to
 deploy my app into Docker, Kubernetes and AWS.
 
-In this post, I'll describe how my blog is configured and how it works with
+In this post, I'll describe how my blog is conpost_imaged and how it works with
 `blog-gen` to get deployed into AWS S3 and CloudFront.
 
 In the next post, I'll talk about how I use `blog-gen` to generate containerized
@@ -129,3 +129,23 @@ this journey, I'll talk about how I can use
 resources for multiple blogs with a single manifest.
 
 Let's go!
+
+## `blog-gen` architecture
+
+{{< post_image name="architecture" >}}
+
+The heart of `blog-gen` is in its [deploy
+script](https://github.com/carlosonunez/https-hugo-bloggen/blob/main/scripts/deploy).
+
+Blogs that are managed by `blog-gen` only need three things:
+
+- `env.gpg`: A file encrypted with a PGP passphrase that contains a dotenv file
+  called `.env` that follows `blog-gen`'s [dotenv configuration
+  format](https://github.com/carlosonunez/https-hugo-bloggen/blob/main/.env.example)
+- `params.toml`: An additional set of Hugo configuration properties for your
+  Hugo theme to merge with `blog-gen`'s [default
+  config](https://github.com/carlosonunez/https-hugo-bloggen/blob/main/config.toml.tmpl)
+- Some kind of CI/CD manifest that pulls in `blog-gen` into a top-level folder
+  called `blog-gen` and runs `scripts/deploy`, like
+  my GitHub Actions manifest [here](https://github.com/carlosonunez/blog.carlosnunez.me/blob/main/.github/workflows/main.yml)
+
