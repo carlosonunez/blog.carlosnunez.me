@@ -2,7 +2,11 @@
 {{ $photo_height := ( .Get "height" ) }}
 {{ $photo_width := ( .Get "width" ) }}
 {{ $photo_alt := ( .Get "alt" ) }}
-{{ $photo_base_path := ( printf "/images/%s/%s" .Page.Slug $photo_name ) }}
+{{ $page_slug := .Page.Slug }}
+{{ if ( eq $page_slug "" ) }}
+  {{ $page_slug = .Page.File.BaseFileName }}
+{{ end }}
+{{ $photo_base_path := ( printf "/images/%s/%s" $page_slug $photo_name ) }}
 {{ $photo_path := ( printf "%s.image_not_found" $photo_base_path ) }}
 {{ if ( fileExists (printf "static/%s.png" $photo_base_path) ) }}
   {{ $photo_path = (printf "%s.png" $photo_base_path) }}
