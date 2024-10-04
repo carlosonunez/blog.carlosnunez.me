@@ -1,23 +1,21 @@
 ---
 title: I'm Carlos!
-date: "2021-12-12"
+date: "2024-10-04"
 slug: "about-me"
 linktitle: "About Me"
 ---
 
-<img src="/images/me_20211001.jpg" height=45% width=45%>
+<img src="/images/me_20240416.jpg" height=45% width=45%>
 
-I'm a Cloud and Software Consultant. Brooklyn-born, Houston-based.
+I'm a software developer and DevSecOps enthusiast. Brooklyn-born, Houston-based.
 
 I enjoy helping businesses reach their customers and respond to competition
 faster with less risk and more awesome.
 
 **Focus Areas**
 
-- Engineering-driven Product Development
-- Site and Platform Reliability Engineering
-- Private and Public Cloud Automation
+- Implementing DevSecOps in challenging places
+- Reliability Engineering
+- Cloud- and Container-Native.
 
 {{< social_about_me social_network="linkedin" url_format="https://linkedin.com/in/%s" >}}
-
-{{< social_about_me social_network="twitter" url_format="https://twitter.com/@%s" >}}
