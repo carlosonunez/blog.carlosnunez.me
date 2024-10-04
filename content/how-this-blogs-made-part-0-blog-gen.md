@@ -1,5 +1,5 @@
 ---
-title: How This Blog's Made, Part 0: blog-gen and AWS
+title: "How This Blog's Made, Part 0: blog-gen and AWS"
 date: 2023-10-22T11:01:59-05:00
 draft: true
 categories: 
