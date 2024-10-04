@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - README.md
+      - scripts
 jobs:
   deploy:
     runs-on: ubuntu-latest
