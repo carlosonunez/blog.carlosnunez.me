@@ -1,7 +1,7 @@
 ---
 title: "You probably don't need Husky"
 date: "2024-10-04 09:43:20"
-draft: true
+draft: false
 slug: "you-probably-dont-need-husky"
 image: "/images/you-probably-dont-need-husky/header.png"
 keywords:
