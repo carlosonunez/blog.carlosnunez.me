@@ -1,4 +1,4 @@
-{{ $photo_name := ( .Get "name" )  }}
+{{ $photo_name := ( replaceRE `\.[a-z]{3,}$` "" (.Get "name") )  }}
 {{ $photo_height := ( .Get "height" ) }}
 {{ $photo_width := ( .Get "width" ) }}
 {{ $photo_alt := ( .Get "alt" ) }}
@@ -6,24 +6,18 @@
 {{ if ( eq $page_slug "" ) }}
   {{ $page_slug = .Page.File.BaseFileName }}
 {{ end }}
-{{ $photo_base_path := ( printf "/images/%s/%s" $page_slug $photo_name ) }}
-{{ $photo_path := ( printf "%s.image_not_found" $photo_base_path ) }}
-{{ if ( fileExists (printf "static/%s.png" $photo_base_path) ) }}
-  {{ $photo_path = (printf "%s.png" $photo_base_path) }}
+{{ $photo_path := ( printf "%s.image_not_found" $photo_name ) }}
+{{ range (slice "jpg" "png" "jpeg" "tiff" "gif" "svg") }}
+  {{ $ext := . }}
+  {{ range (slice "static/images" (printf "static/images/%s" $page_slug)) }}
+    {{ $path := . }}
+    {{ $want := (printf "%s/%s.%s" $path $photo_name $ext) }}
+    {{ if (fileExists $want) }}
+      {{ $photo_path = (replace $want "static" "") }}
+      {{ break }}
+    {{ end }}
+  {{ end }}
 {{ end }}
-{{ if ( fileExists (printf "static/%s.jpg" $photo_base_path) ) }}
-  {{ $photo_path = (printf "%s.jpg" $photo_base_path) }}
-{{ end }}
-{{ if ( fileExists (printf "static/%s.tiff" $photo_base_path) ) }}
-  {{ $photo_path = (printf "%s.tiff" $photo_base_path) }}
-{{ end }}
-{{ if ( fileExists (printf "static/%s.gif" $photo_base_path) ) }}
-  {{ $photo_path = (printf "%s.gif" $photo_base_path) }}
-{{ end }}
-{{ if ( fileExists (printf "static/%s.svg" $photo_base_path) ) }}
-  {{ $photo_path = (printf "%s.svg" $photo_base_path) }}
-{{ end }}
-
 <p></p>
 <img src="{{ $photo_path }}" {{ if (.Get "height") }} height="{{ $photo_height }}"
      {{ end }}
