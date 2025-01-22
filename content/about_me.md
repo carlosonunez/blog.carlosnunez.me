@@ -1,11 +1,11 @@
 ---
 title: I'm Carlos!
-date: "2024-10-04"
+date: "2025-01-22"
 slug: "about-me"
 linktitle: "About Me"
 ---
 
-<img src="/images/me_20240416.jpg" height=45% width=45%>
+{{< post_image name="me_20250101.jpg" height=45% width=45% >}}
 
 I'm a software developer and DevSecOps enthusiast. Brooklyn-born, Houston-based.
 
