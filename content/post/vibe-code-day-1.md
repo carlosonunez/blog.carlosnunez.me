@@ -1,13 +1,14 @@
 ---
-title: Carlos learns to vibe code, Day 1
-date: 2025-08-09T13:06:58-05:00
+title: "Carlos learns to vibe code, Day 1: real humans only"
+date: 2025-08-09T20:36:00-05:00
 draft: false
 slug: "vibe-code-day-1"
-image: "/images/vibe-code-day-1/ALL_THE_VIBES_DOT_JPEG.PNG"
+image: "/images/vibe-code-day-1/blocked.png"
 categories: 
   - software
   - ai
   - llm
+  - vibe code series
 tags: 
   - software
   - vibe coding
@@ -17,87 +18,113 @@ tags:
   - claude code
 ---
 
-So, [I don't like](https://news.ycombinator.com/item?id=44822258#44825797) LLMs.
-I'm optimistically terrified of their long-term impact to society.
+* [Day 0](../vibe-code-day-0)
+* [Day 1](../vibe-code-day-1) **⬅️ you are here**
 
-I also know that I've grown to like stuff that I've held
-strongly-negative opinions on, like `vim`, Ruby, Kubernetes (I was a huge
-Kubernetes hater when it first got popular!) and Golang after forcing myself to
-use them for two weeks or so.
+So, Day 1 was super productive! I signed up for Claude! Yay!
 
-Given how you can count on finding _somebody_ using ChatGPT to look something up
-on any given day in some public space, I determined that it was time to give Big
-AI™ it's two weeks.
+## Signing Up
 
-I've been introducing ChatGPT and Kagi Assistant into my web search workflow.
-It's going okay, though it still gets things wrong a fair amount of the time.
+{{< post_image name="phone-number" alt="This manuever will take your entire day and $20." >}}
 
-However, I've decided to trust fall my way into letting LLMs into my
-professional life. I'm [putting on my
-Oakleys](https://www.youtube.com/watch?v=JeNS1ZNHQs8&pp=ygUPdmliZSBjb2Rpbmcga2Fp)
-and going full speed into Vibe Coding.™
+Signing up was a process.
 
-This post series will document my adventures into using Claude Code to author
-an app I've been wanting for myself for a long time: an IFTTT-like app for
-syncing my online presence based on external events.
+To minimize the number of times my personal data gets sold and, unavoidably,
+leaked to search engines, I use a combination of
+[Ironvest](https://ironvest.com) or [Fastmail's](https://fastmail.com) Masked
+Email feature, throwaway phone numbers from [SMSpool](https://smspool.com) and
+[Privacy](https://privacy.com) cards to sign up for services I might not keep
+long term. (I actually use Privacy cards for all of my online services, as it is
+_so much easier_ to keep track of recurring costs this way.)
 
-Best case: Claude Code becomes life and I spend the rest of my six-month career as an AI
-influencer.
+Anthropic...had opinions about that. Mostly "yeah, but no" opinions.
 
-Worst case: I have some shiny stuff to put on my
-[resume](https://eng.resume.carlosnunez.me).
+Ironvest emails worked fine as long as I used one of their custom domains.
+Providing a phone number was a different story.
 
-## The App
+I tried using the default Masked Phone number from IronVest that I use for most
+services. Claude straight up rejected it. This was surprising, as most services
+(including Google, who is known for having strict phone number verification)
+have accepted this number in the past.
 
-{{< post_image name="status-app" alt="My first vibe code experiment" >}}
+Time for plan B. I created a throwaway account on SMSpool, gave it $5 through a
+one-time Privacy card with a $5 cap, created a number that was compatible with
+Anthropic and tried again.
 
-Many years ago, [I wrote](https://github.com/carlosonunez/slack-status-bot) a
-simple Ruby app that changes my Slack status based on the names of trips in my
-TripIt account. As a DevOps consultant that traveled every week, I needed a
-service like this to tell other people where I was without having to do so
-manually in Slack.
+This worked! Sort of.
 
-The app relied on two other services that I also wrote:
+Anthropic accepted the number, but its SMS verification code never arrived, even
+after waiting the three minutes SMSpool recommends for activation and such. The
+second number I created _did_ receive an SMS, which was great.
 
-- [A service](https://github.com/carlosonunez/slack-apis) that authenticated
-  into my employer's Slack workspace and handled status getting and setting, and
+Or so I thought.
 
-- [Another service](https://github.com/carlosonunez/tripit-apis) that
-  authenticated into my TripIt account and retrieved trip details.
+{{< post_image name="blocked" >}}
 
-My Ruby app hit scaling limitations fairly quickly. Adding new event sources and
-status handlers, like Google Calendar and WhatsApp, became cumbersome
-to impossible. Life and work hampered progress, too. Over time, my app became more
-crusty, more outdated, and, most importantly, more unscalable.
+I went back into the terminal to finish authenticating the `claude` CLI. It had
+me go back into the browser to get an auth code. Surprisingly, I discovered that
+my account was blocked!
 
-I took a week-long solo vacation to Portland many years ago to
-[rewrite](https://github.com/carlosonunez/status) my status handling app into
-something more event-based. While I learned a lot about `sync.WaitGroup`s and
-the limitations of goroutines and channels, I only got as far as building the
-framework for the app. I didn't have enough time to write the listeners and
-handlers. Life and work took ofter again, and the rewrite staled once again.
+The speed at which Anthropic's abuse system disabled this account was actually
+quite impressive.
 
-Anyway, I'm going to build the rewrite, come hell or high water! And I'm going
-to outsource the task to my new mandatory best friend, Claude.
+There was no way I was giving Anthropic my real number. I didn't want to do it,
+but I had to engage Plan C.
 
-## Approach
+{{< post_image name="esim" alt="so pissed i had to do this" >}}
 
-This is the roadmap for how I'm going to do this:
+It was time to buy a prepaid eSIM.
 
-- [ ] Go almost all in and purchase a $20/month Anthropic subscription (I'll
-upgrade to the $200/month Max subscription if this goes really well)
+I definitely didn't want to do this, though with more online services cracking
+down on VoIP phone numbers, it was only a matter of time.
 
-- [ ] Use a basic prompt describing my design, requirements and acceptance
-criteria
+Airalo was my first choice. I've heard of this service from the
+[`/r/onebag`](https://old.reddit.com/r/onebag) community. Many people seem to
+like it for getting eSIMs quickly on international trips. I wasn't traveling
+beyond my couch, but it'll work all the same.
 
-- [ ] Use another prompt to write code to deploy infra components into AWS.
+Signing up and registering the eSIM to my phone was easy. 10 minutes and $10
+later, I had a phone number and was on my way.
 
-- [ ] Slowly incorporate agentic capabilities by adding some tools to handle
-deployment.
+{{< post_image name="blocked" alt="ARE YOU KIDDING ME">}}
 
-If this goes well, I'll re-attempt all of this with another project I have in my
-to-do list, but with a local LLM running on a beefy Mac studio that I'll
-acquire.
+Anthropic blocks Airalo numbers!
 
-Alright! Enough stage setting! Let's get to work.
+I was floored. It's a real phone number on T-Mobile's network! How did they even
+know?! DO THEY NOT LIKE MONEY?
 
+Fine, so Airalo won't work. I wasn't going to give up yet.
+
+What about US Mobile, the carrier I use for my work phone, whose number hasn't
+been blocked by any online services to date?
+
+**Success.**
+
+It took a little while to get my number activated, but once that finished, I was
+_FINALLY_ able to register with _yet another_ masked email and give Anthropic my
+damn money.
+
+{{< post_image name="requirements" alt="it's all about requirements, really" >}}
+
+In a way, I was actually thankful for going through this whole ordeal. It made
+me realize that the prompt I wanted to create wasn't detailed enough to describe
+what I wanted to build.
+
+Thus, I used the downtime to spend time on tuning my prompt. I added a
+description of what I wanted to achieve, the modules I wanted Claude to build
+for this app, schemas for the objects used throughout my status app,...
+
+...which is when I saw it.
+
+Years ago, in prehistoric times, I used Cucumber-style BDD tests to describe
+what I wanted my applications to achieve. While these often changed
+significantly as I iterated, this really helped me figure out _what I actually
+wanted._
+
+And here I was doing that again!
+
+It seems that spending time writing _and thinking_ about what you want is still
+critical, vibe coding or otherwise.
+
+This, I posit, gives senior engineers a substantial edge in the all-AI, all the
+time future we're converging to...but that's a post for day 2!
