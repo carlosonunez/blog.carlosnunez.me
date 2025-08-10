@@ -24,14 +24,15 @@ tags:
 So, [I don't like](https://news.ycombinator.com/item?id=44822258#44825797) LLMs.
 I'm optimistically terrified of their long-term impact to society.
 
-I also know that I've grown to like stuff that I've held
-strongly-negative opinions on, like `vim`, Ruby, Kubernetes (I was a huge
-Kubernetes hater when it first got popular!) and Golang after forcing myself to
-use them for two weeks or so.
+I also know that I've grown to like stuff that I've held strongly-negative
+opinions on, like `vim` (which I used to write this), Ruby (which was my
+preferred language for many years), Kubernetes (I was a huge Kubernetes hater
+when it first got popular!) and Golang. Two weeks using nothing but the thing
+was enough for me to either become a zealot or remain a life-long hater.
 
-Given how you can count on finding _somebody_ using ChatGPT to look something up
-on any given day in some public space, I determined that it was time to give Big
-AI™ it's two weeks.
+Given how you can count on finding _at least_ one person using ChatGPT to look
+something up on any given day in some public space, I determined that it was
+time to give Big AI™ it's two weeks.
 
 I've been introducing ChatGPT and Kagi Assistant into my web search workflow.
 It's going okay, though it still gets things wrong a fair amount of the time.
@@ -47,11 +48,10 @@ This post series will document using Claude Code to author
 an app I've been wanting for myself for a long time: an IFTTT-like app for
 syncing my online presence based on external events.
 
-Best case: Claude Code becomes life and I spend the rest of my six-month career as an AI
-influencer.
+Best case: Claude Code becomes life and I spend the rest of my six-month career
+in tech as an AI influencer.
 
-Worst case: I have some shiny stuff to put on my
-[resume](https://eng.resume.carlosnunez.me).
+Worst case: I have some shiny stuff to put on my [resume](https://eng.resume.carlosnunez.me).
 
 ## The App
 
