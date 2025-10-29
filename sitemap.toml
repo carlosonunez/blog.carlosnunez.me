@@ -5,9 +5,9 @@
   weight = -10
 
 [[ menu.main ]]
-  identifier = "retros"
-  name = "Retrospectives"
-  url = "{{ .Env.RETROSPECTIVES_URL }}"
+  identifier = "cncf-weekly"
+  name = "CNCF Weekly"
+  url = "/keywords/cncf-weekly"
   weight = -9
 
 [[ menu.main ]]
