@@ -38,9 +38,21 @@ And that's how CNCF Weekly was born.
 My goal for CNCF weekly will be to provide a high-level overview of every tool
 in the CNCF landscape. You'll get:
 
-- A one-sentence explainer of what the the tool is,
-- A high-level summary of what it is and why you'd want to use it, and
-- A quick guide on getting started with it.
+- A one-sentence "in a nutshell" explainer of what the the tool is,
+- A high-level summary of what it is and why you'd want to use it,
+- A quick guide on getting started with it, and
+- Some next steps to consider.
+
+## AI Policy
+
+I don't use AI when I write (though some of the hot mess I've written in the
+past would be perfect for it 😂). CNCF Weekly is no exception.
+
+Posts in CNCF Weekly will be written, edited and tested manually by yours truly
+unless explicitly stated otherwise.
+
+That said, AI-adjacent projects are entering the CNCF portfolio at a rapid clip,
+and I'm looking forward to covering them here!
 
 ## A note about the quick start guides
 
