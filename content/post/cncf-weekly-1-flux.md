@@ -29,8 +29,8 @@ cloud-native community.
 
 ## In a nutshell...
 
-Flux manages all of the apps in your Kubernetes clusters, and even your other
-Kubernetes clusters, entirely in Git, no Jenkins required.
+Flux enables Kubernetes clusters and their apps to be configured with Git. Time
+to retire your Jenkins pipelines.
 
 ## Who's This For?
 
@@ -42,29 +42,32 @@ Kubernetes clusters, entirely in Git, no Jenkins required.
 
 {{< post_image name="k8s_made_easy" alt="kubeadm never had it so good." >}}
 
-Spinning up Kubernetes clusters is pretty easy these days. Fill out some text
-fields, click a few buttons, and boom, you're cloud-native and ready to run ALL
-the apps! [^0]
+Say you just spun up a brand-spankin' new Kubernetes cluster. `kubectl`
+works, and you can _feel_ the power hiding underneath it. All is good.
 
-Managing applications and services on those clusters is a little more involved
-though.
+It's time to install some stuff into it. [Probably something AI
+related](https://github.com/kserve/kserve) to satisfy your company's "enterprise
+AI strategy."
 
-For one, there's lots of ways of doing it!
+This is easy work: grab (or make) its Helm chart, `helm upgrade --install` it
+and you're off to the races.
+
+This will _not_ be easy work when your AI-related thing finds its
+[PMF](https://en.wikipedia.org/wiki/Product-market_fit) and now needs 10
+Kubernetes clusters with hundreds of apps to keep up.
+
+You'll need to automate. And you'll be overwhelmed by your options!
 
 You could `kubectl` your way to a desired state, but that'll be a lot of work at
-a small scale and basically impossible at "webscale™".
+a small scale and basically impossible at "webscale™", as you'll observe when
+you spin up cluster #2.
 
-You could also use Terraform or Ansible (or both!) to achieve Day 2...and many people
+You could also use Terraform/OpenTofu or Ansible (or both!), like many people
 do! Both of those tools are excellent for declaring and configuring infra like
 Kubernetes clusters, especially when combined with Kubernetes package managers
 like [Helm](https://helm.sh) or [kApp](https://carvel.dev/kapp).
 
-Speaking of package managers, you could even manage all of your apps entirely
-with Helm and a series of ~~tubes~~ pipelines!
-
 {{< post_image name="gitops" alt="build the world one git commit at a time" >}}
-
-Then you have to keep up with changes.
 
 All of these options (and more!) are totally-valid ways of configuring apps in
 clusters...but what do you do when you want to, say, update an application in
@@ -77,11 +80,22 @@ GitOps basically defines itself: operations via Git commits. It gives you the
 best of both worlds: audit trails tracked by a super-well-known decentralized
 version control system in near real time.
 
-GitOps _tools_ like Flux and [ArgoCD](https://argo-cd.readthedocs.io/), a tool
-I'll cover in another CNCF Weekly, make it really easy to put this into
-practice. This way, you won't have to build a series of pipelines that kick off
-Terraform and Ansible against your Kubernetes clusters whenever you change a
-config value somewhere.
+You can achieve GitOps the old-school way by creating a pipeline or two with
+your [favorite build system](https://github.com/features/actions) and configure
+them to execute whenever a new set of changes (perhaps through a pull request)
+gets pushed up to a Git repository. This approach works great and is often used
+for provisioning base infrastructure, like Kubernetes clusters.
+
+GitOps _tools_ enable you to "remove the middleman" by
+enabling your clusters to update themselves when those changes arrive instead of
+waiting for a pipeline to do it for them. You gain all of the
+advantages of tracking changes through Git without the fragility and latency
+that can come with pipelines.
+
+**Flux** is a tool that _only_ does GitOps. It's so dedicated to the GitOps
+problem, it doesn't even come with a GUI! (Several are available, though; I
+outline them in my recommended [next steps](#next-steps) at the end of this
+CNCF Weekly.
 
 ## Things I Like
 
@@ -124,32 +138,112 @@ purpose:
 
 ## Getting Started
 
-> 📝 You can find the source code for all of this
-> [**here**](https://github.com/carlosonunez/cncf-weekly/flux)
+|                   |                                                                             |
+| :-----            | :-----                                                                      |
+| **Time Required** | 1-2 hours                                                                   |
+| **Source**        | [GitHub](https://github.com/carlosonunez/cncf-weekly-guides/tree/main/flux) |
 
-**Time Required**: 1-2 hours
+You're going to use Flux to configure three apps --- `app-a`, `app-b`, and
+`app-c` --- into two local Kubernetes clusters, `dev` and `prod`, entirely with
+Git.
 
-Let's say we have two Kubernetes clusters, `dev` and `prod`, and three
-applications available to them: `app-a`, `app-b` and `app-c`. Let's also say
-that we have some Kubernetes Secrets in a folder called `secrets` that we want
-to make available to both clusters, but we want to safely keep track of them 
-in our Git repository since we want to keep our application's configuration [as
-close to the app as possible](url).
+We're also going to see how Flux works with
+[`sops`](https://github.com/getsops/sops), an excellent encryption tool, to
+make storing Kubernetes Secrets in your Git repository safe and secure.
 
-We're going to use Flux to do **all** of this, entirely with Git.
+Let's jump in.
 
-## Steps
+### Steps
 
 - [Create our workspace](#create-a-workspace)
-- [Configure our machine to encrypt Kubernetes secrets](#configure-kubernetes-secrets-encryption)
 - [Set up `dev` and `prod` Kubernetes clusters on our machine](#setting-up-our-infrastructure)
 - [Start a local Git server to configure our clusters with](#setting-up-a-local-git-server)
-- [Create and commit configuration for our clusters](#create-cluster-configurations)
+- [Create a configuration repo](#create-a-configuration-repo)
+- [Configure our machine to encrypt Kubernetes secrets](#configure-kubernetes-secrets-encryption)
+- [Add encrypted Kubernetes secrets](#add-encrypted-kubernetes-secrets)
 - [Install Flux into our `dev` and `prod` clusters](#install-and-bootstrap-flux)
 - [Configure our clusters](#configure-our-clusters)
 - [Make a change and see it apply!](#do-the-gitops)
 
-### Create a workspace
+#### Install tools
+
+Let's install the tools we'll use in this guide.
+
+##### Podman
+
+{{< post_image name="containers" alt="Containers. Containers everywhere." >}}
+
+**Mac**: `brew install podman`
+**Windows**: `winget install RedHat.Podman`
+
+Run the command below after installing Podman to set up a machine that will run
+the Podman container engine:
+
+```sh
+cat >$HOME/.config/containers/containers.conf <<-EOF
+[machine]
+rosetta=false
+EOF
+podman machine init flux
+podman machine start flux
+```
+
+Finally, confirm that Podman's installed:
+
+```sh
+podman run --rm hello
+```
+
+You're good to go when you see friendly seals welcome you to Podman.
+
+```text
+Resolved "hello" as an alias (/etc/containers/registries.conf.d/000-shortnames.conf)
+Trying to pull quay.io/podman/hello:latest...
+Getting image source signatures
+Copying blob sha256:1ff9adeff4443b503b304e7aa4c37bb90762947125f4a522b370162a7492ff47
+Copying config sha256:83fc7ce1224f5ed3885f6aaec0bb001c0bbb2a308e3250d7408804a720c72a32
+Writing manifest to image destination
+!... Hello Podman World ...!
+
+         .--"--.
+       / -     - \
+      / (O)   (O) \
+   ~~~| -=(,Y,)=- |
+    .---. /`  \   |~~
+ ~/  o  o \~~~~.----. ~~
+  | =(X)= |~  / (O (O) \
+   ~~~~~~~  ~| =(Y_)=-  |
+  ~~~~    ~~~|   U      |~~
+
+Project:   https://github.com/containers/podman
+Website:   https://podman.io
+Desktop:   https://podman-desktop.io
+Documents: https://docs.podman.io
+YouTube:   https://youtube.com/@Podman
+X/Twitter: @Podman_io
+Mastodon:  @Podman_io@fosstodon.org
+```
+
+##### Kind
+
+We'll use this to create our Kubernetes clusters in Docker.
+
+**Mac**: `brew install kind`
+**Windows**: `winget install Kubernetes.kind`
+
+##### Flux
+
+**Mac**: `brew install fluxcd/tap/flux`
+**Windows**: `winget install FluxCD.Flux`
+
+##### sOps and GnuPG
+
+We'll use these tools together, so it makes sense to install them together!
+
+**Mac**: `brew install gnupg sops`
+**Windows**: `winget install GnuPG.GnuPG Mozilla.SOPS`
+
+#### Create a workspace
 
 First things first; let's create a sandbox to experiment in:
 
@@ -157,9 +251,9 @@ First things first; let's create a sandbox to experiment in:
 mkdir $PWD/flux; cd $PWD/flux
 ```
 
-Easy. Let's carry on!
+Easy. One down; seven more steps to go!
 
-### Setting up our infrastructure
+#### Setting up our infrastructure
 
 We're going to use [Kind](https://kind.sigs.k8s.io) to create a local cluster.
 I'm going to assume you have it installed. Check out [my first
@@ -171,7 +265,7 @@ kind create cluster --name cluster-dev
 kind create cluster --name cluster-prod
 ```
 
-### Setting up a local Git server
+#### Setting up a local Git server
 
 Flux synchronizes Kubernetes cluster configuration with manifests in Git repos.
 Now that we have our example Kubernetes clusters, let's stand up a local Git
@@ -245,7 +339,7 @@ curl: (48) Unknown telnet option FAKE=1
 
 (The `Unknown telnet option` errors can be ignored.)
 
-#### Create our configuration repo
+#### Create a configuration repo
 
 Our Git server humming idly. Let's put it to work by creating a repo for our Git
 configurations and push our changes up to it.
@@ -286,6 +380,49 @@ This should produce something like the below:
 ```
 
 Cool, right?
+
+#### Add encrypted Kubernetes secrets
+
+Now that our repo is set up, we're going to set ourselves up to store some
+Kubernetes Secrets into it securely.
+
+##### Install tools
+
+We'll need two tools to do this: `sops` and GnuPG. Both are easy to install.
+
+
+##### Create a GPG key
+
+Next, use the command below to create a GPG key that we'll use to encrypt our
+Kubernetes secrets with.
+
+```sh
+gpg --quick-generate-key --passphrase='' --batch cluster
+```
+
+Run the command below to confirm that your key was created and is being tracked
+by GnuGPG:
+
+```sh
+gpg --list-keys cluster
+```
+
+You should get something like the result below:
+
+```
+gpg: checking the trustdb
+gpg: marginals needed: 3  completes needed: 1  trust model: pgp
+gpg: depth: 0  valid:   3  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 3u
+pub   ed25519 2025-12-12 [SC] [expires: 2028-12-11]
+      3BD08674578887B3BE5F6A62AA344CC889F611DC
+uid           [ultimate] cluster
+sub   cv25519 2025-12-12 [E]
+```
+
+#### Configure sOps
+
+
+
 
 ### Create a Git project for our infrastructure
 
