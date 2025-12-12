@@ -251,18 +251,31 @@ First things first; let's create a sandbox to experiment in:
 mkdir $PWD/flux; cd $PWD/flux
 ```
 
-Easy. One down; seven more steps to go!
+Super easy already!
 
 #### Setting up our infrastructure
 
-We're going to use [Kind](https://kind.sigs.k8s.io) to create a local cluster.
-I'm going to assume you have it installed. Check out [my first
-post](./cncf-weekly-init) of the CNCF
-Weekly series if you don't for a quick guide on doing that!
+Let's create our two clusters with `kind`. Run the command below to do that:
 
 ```sh
 kind create cluster --name cluster-dev
 kind create cluster --name cluster-prod
+```
+
+You're good to continue if you see output similar to this for both clusters:
+
+```
+using podman due to KIND_EXPERIMENTAL_PROVIDER
+enabling experimental podman provider
+Creating cluster "cluster-dev" ...
+ ✓ Ensuring node image (kindest/node:v1.34.0) 🖼
+ ✓ Preparing nodes 📦
+ ✓ Writing configuration 📜
+ ✓ Starting control-plane 🕹️
+ ✓ Installing CNI 🔌
+ ✓ Installing StorageClass 💾
+Set kubectl context to "kind-cluster-dev"
+# ...truncated; repeats for "cluster-prod"
 ```
 
 #### Setting up a local Git server
@@ -272,28 +285,26 @@ Now that we have our example Kubernetes clusters, let's stand up a local Git
 repo to store our cluster configurations into!
 
 > **NOTE**: Most tutorials online will have you do this on a hosted Git
-> repository service like GitHub or GitLab. I definitely recommend practicing
-> how to do this, as this is how Flux is more commonly used.
+> repository service like GitHub or GitLab. I definitely recommend checking
+> those guides out at some point, as this is how Flux is more commonly used.
 >
-> For our little toy environment, we're using a local Git repo to save time and
-> avoid creating accounts, adding SSH keys to our profile and all of the other
-> chores you'll do when you do that exercise yourself!
+> For our little toy environment, however, we're using a local Git repo to save
+> time and avoid creating accounts, adding SSH keys to our profile and all of
+> the other chores you'll do when you do that exercise yourself!
 
 #### Create SSH Keys
 
 We're going to push changes to our configuration repos over SSH. While Flux
 supports HTTPS, setting this up is slightly more involved, and SSH is more
-secure anyway!
+secure anyway, so SSH is what we're going to go with.
 
-We'll need an SSH private key to do this, so run the below to create one without
-a passphrase:
+We'll need an SSH private key to do this. Run the below to create one without a
+passphrase:
 
 ```sh
 mkdir $PWD/keys
 ssh-keygen -t rsa -f ./keys/id_rsa -qN''
 ```
-
-Cool.
 
 #### Start a Git server
 
@@ -301,12 +312,17 @@ Now let's use Docker to create a local Git server that Flux will fetch
 configurations from in both of our servers.
 
 ```sh
-docker run --rm --network=kind -p 2222:22 -d \
+podman run --rm --network=kind -p 2222:22 -d \
   --name gitserver \
   -v $PWD/repo:/git-server/repos/infra \
   -v $PWD/keys:/git-server/keys \
   jkarlos/git-server-docker
 ```
+
+> **TIP**: The `--network=kind` argument instructs Podman to connect the
+> container's virtual network interface to the same network that our Kind
+> clusters are using. This will make it really easy for our Kubernetes clusters
+> to access our Git server, as you'll see shortly!
 
 Once that's done, use the command below to confirm that our Git server is up and
 running and accepts our SSH key:
@@ -315,29 +331,6 @@ running and accepts our SSH key:
 # You might need to run this a few times before you see the welcome message.
 ssh -i $PWD/keys/id_rsa git@127.0.0.1 -p 2222 | grep 'Welcome'
 ```
-
-Optionally, you can use the command below to confirm that the Git server is
-reachable from our Kind clusters:
-
-```sh
-for env in dev prod
-do
-    docker exec -it "cluster-${env}-control-plane" \
-        curl -sS --telnet-option FAKE=1 telnet://gitserver:22;
-    echo "===> ${env}: $?"
-done
-```
-
-Which will produce the output below:
-
-```
-curl: (48) Unknown telnet option FAKE=1
-===> dev: 48
-curl: (48) Unknown telnet option FAKE=1
-===> prod: 48
-```
-
-(The `Unknown telnet option` errors can be ignored.)
 
 #### Create a configuration repo
 
@@ -381,19 +374,79 @@ This should produce something like the below:
 
 Cool, right?
 
+#### Confirming connectivity between the Git server and Kubernetes
+
+We'll also want to make sure that pods in our Kubernetes clusters can reach the
+Git server. We can do that with a test Pod relatively quickly.
+
+Let's start with the `dev` cluster. First, start a `sleep` Pod using the `git`
+container image from the Alpine Linux project that will stay up while we conduct
+the test:
+
+```sh
+kubectl --context kind-cluster-dev run --image=alpine/git --command git-test -- sleep infinity
+```
+
+Use this command to wait for the Pod to start:
+
+```sh
+kubectl --context kind-cluster-dev wait  --for=jsonpath='{.status.phase}'=Running pod/git-test
+```
+
+You'll see `pod/git-test condition met` when the Pod is up and running.
+
+Next, copy the SSH private key we created earlier into the Pod:
+
+```sh
+kubectl --context kind-cluster-dev cp $PWD/keys/id_rsa git-test:/tmp/key
+```
+
+Then use `kubectl exec` to try and clone our repo within our Pod:
+
+```sh
+kubectl --context kind-cluster-dev exec -it git-test -- \
+  git clone --config core.sshCommand='ssh -i /tmp/key' git@gitserver/git-server/repos/infra /tmp/repo
+```
+
+`git` will clone the repo shortly afterwards once you accept the scary warning
+message:
+
+```
+remote: Counting objects: 2, done.
+remote: Total 2 (delta 0), reused 0 (delta 0)
+Receiving objects: 100% (2/2), done.
+```
+
+Finally, check the repo's log to confirm that our initial commit is there:
+
+```sh
+kubectl --context kind-cluster-dev exec -it git-test -- git log -1
+```
+
+This will give you something like this:
+
+```
+commit 1bc39f3df6455e85960f04bb9eb31db4cfff6cee (HEAD -> main, origin/main, origin/HEAD)
+Author: Carlos Nunez <13461447+carlosonunez@users.noreply.github.com>
+Date:   Fri Dec 12 13:39:44 2025 -0600
+
+    first commit
+```
+
+If it does, then congratulations, the `dev` Kubernetes cluster and your local
+Git server can talk to each other!
+
+Repeat the process with the `prod` server by changing `kind-cluster-dev`
+references to `kind-cluster-prod` in the commands you just ran.
+
 #### Add encrypted Kubernetes secrets
 
 Now that our repo is set up, we're going to set ourselves up to store some
 Kubernetes Secrets into it securely.
 
-##### Install tools
-
-We'll need two tools to do this: `sops` and GnuPG. Both are easy to install.
-
-
 ##### Create a GPG key
 
-Next, use the command below to create a GPG key that we'll use to encrypt our
+First, use the command below to create a GPG key that we'll use to encrypt our
 Kubernetes secrets with.
 
 ```sh
@@ -419,10 +472,27 @@ uid           [ultimate] cluster
 sub   cv25519 2025-12-12 [E]
 ```
 
+The alphanumeric string underneath `pub` is our key's fingerprint. Copy the
+string, as we'll need it when we configure sOps to use this key.
+
 #### Configure sOps
 
+Next, we'll need to tell sOps to use the GPG key we created when encrypting and
+decrypting Kubernetes secrets in our repo. This is accomplished by defining
+a "creation rule" in a file called `.sops.yaml` at the root of our repository.
+
+To do that, copy the command below, replace the stuff after `pgp` with the
+fingerprint you copied earlier, and run it:
 
 
+```sh
+cat >$PWD/repo/.sops.yaml <<-EOF
+creation_rules:
+- path_regex: .*.yaml$
+  encrypted_regex: ^(data|stringData)$
+  pgp: **Paste your fingerprint here**
+EOF
+```
 
 ### Create a Git project for our infrastructure
 
