@@ -2,7 +2,7 @@
 title: "CNCF Weekly #1: Flux"
 date: 2025-10-29T13:41:00-06:00
 draft: true
-image: "/images/cncf-weekly-1/header.png"
+image: "/images/cncf-weekly-1-flux/header.png"
 categories:
 - kubernetes
 - cncf-weekly
@@ -13,6 +13,8 @@ tags:
 - cloud-native
 - gitops
 - flux
+keywords:
+- cncf-weekly
 ---
 
 I'm starting off CNCF Weekly with Flux, a useful and well-known tool in the
@@ -42,6 +44,9 @@ to retire your Jenkins pipelines.
 
 {{< post_image name="k8s_made_easy" alt="kubeadm never had it so good." >}}
 
+_(**Source**: Google Cloud's Amazing Comic on Kubernetes.
+[link](https://cloud.google.com/kubernetes-engine/kubernetes-comic))_
+
 You just spun up a brand-spankin' new Kubernetes cluster. `kubectl` works. You
 can _feel_ the power within your nodes waiting to be unleashed. All is good.
 
@@ -69,6 +74,9 @@ Kubernetes clusters, especially when combined with Kubernetes package managers
 like [Helm](https://helm.sh) or [kApp](https://carvel.dev/kapp).
 
 {{< post_image name="gitops" alt="build the world one git commit at a time" >}}
+
+_(**Source**: /r/Kubernetes, because they're way funnier than I am.
+[link](https://old.reddit.com/r/kubernetes/comments/1o9zhfs/its_gitops_or_git_operations/))_
 
 All of these options (and more!) are totally-valid ways of configuring apps in
 clusters...but what do you do when you want to, say, update an application in
@@ -159,10 +167,9 @@ Let's jump in.
 - [Set up `dev` and `prod` Kubernetes clusters on our machine](#setting-up-our-infrastructure)
 - [Start a local Git server to configure our clusters with](#setting-up-a-local-git-server)
 - [Configure our machine to encrypt Kubernetes secrets](#configure-kubernetes-secrets-encryption)
-- [Add encrypted Kubernetes secrets](#add-encrypted-kubernetes-secrets)
 - [Bootstrap Flux into our `dev` and `prod` clusters](#install-and-bootstrap-flux)
-- [Install and configure a "traditional" k8s app, the GitOps way](#install-traditional-k8s-apps)
-- [Install and configure Helm charts, the GitOps way](#install-helm-charts)
+- [Install and configure a "traditional" k8s app, the GitOps way](#install-a-traditional-kubernetes-app-the-gitops-way)
+- [Install and configure Helm charts, the GitOps way](#install-helm-charts-the-gitops-way)
 - [Clean Up](#clean-up)
 
 ### Install tools
@@ -174,6 +181,7 @@ Let's install the tools we'll use in this guide.
 {{< post_image name="containers" alt="Containers. Containers everywhere." >}}
 
 **Mac**: `brew install podman`
+
 **Windows**: `winget install RedHat.Podman`
 
 > 📝 **Apple Silicon Mac Users**
@@ -305,6 +313,8 @@ cluster-dev-control-plane   Ready    control-plane   2m32s   v1.34.0
 ```
 
 ### Setting up a local Git server
+
+{{< post_image name="git" alt="The Git client can ALSO run a server!" >}}
 
 Flux synchronizes Kubernetes cluster configuration with manifests in Git repos.
 This means we'll need a Git repository to store configurations and stuff into,
@@ -564,11 +574,17 @@ git -C "$PWD/repo" commit -m "add sOps config for secrets"
 git -C "$PWD/repo" push
 ```
 
+
 ### Install and Bootstrap Flux
 
-#### Doing the Installation
+{{< post_image name="bootstrap" alt="No actual boots required." >}}
+
+_(**Source**: A random eBay listing! Unfortunately, the auction ended.
+[link](https://www.ebay.com/itm/386261123731))_
 
 We've finally arrived at the fun stuff. It's time to set up Flux.
+
+#### Doing the Installation
 
 Once again, we'll start with the `dev` server. First, use `flux check --pre` to
 ensure that we're good to install Flux on this server:
@@ -765,10 +781,580 @@ gpg --export-secret-keys --armor "$fp" |
 
 Congrats! Flux is now set up and ready to manage apps in our cluster.
 
-- [Install and configure a "traditional" k8s app, the GitOps way](#install-traditional-k8s-apps)
-- [Install and configure Helm charts, the GitOps way](#install-helm-charts)
-- [Clean Up](#clean-up)
+### Install a "Traditional" Kubernetes App, the GitOps Way
 
+{{< post_image name="guestbook" alt="It's just a guestbook." >}}
+
+We'll start with a "traditional" Kubernetes app, i.e. one that's deployed with
+`kubectl apply`.
+[Guestbook](https://github.com/kubernetes/examples/tree/master/web/guestbook) is
+a simple app maintained by the Kubernetes authors that let's you add messages to
+a guestbook.
+
+#### About Kustomize
+
+Flux uses
+[`kustomize`](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/),
+a Kubernetes component, to render traditional Kubernetes manifests in a
+directory, and for good reason.
+
+At its heart, using Kustomize is fairly straightforward. Say that you have
+Deployment, Service and Ingress resources defined by `deployment.yaml`,
+`service.yaml`, and `ingress.yaml` respectively. Instead of running the usual
+`kubectl` commands to apply them all, like this:
+
+```sh
+kubectl apply -f deployment.yaml service.yaml ingress.yaml
+```
+
+You can create another file called `kustomization.yaml` in the same directory
+that "links" them together:
+
+```sh
+# kustomization.yaml
+resources:
+- deployment.yaml
+- service.yaml
+- ingress.yaml
+```
+
+and apply the kustomization:
+
+```sh
+kubectl apply -k kustomization.yaml
+```
+
+If you have the `kustomize` application installed, you can also have Kustomize
+build a YAML file based on the resources in a Kustomization:
+
+```sh
+kustomize build kustomization.yaml
+```
+
+Where `kustomize` really shines in ~k~customizing related resources, like
+putting every resource into the same namespace:
+
+```sh
+# kustomization.yaml
+namespace: my-app
+resources:
+- deployment.yaml
+- service.yaml
+- ingress.yaml
+```
+
+Or common labels and annotations:
+
+
+```sh
+# kustomization.yaml
+namespace: my-app
+commonAnnotations:
+  owner: app-team
+resources:
+- deployment.yaml
+- service.yaml
+- ingress.yaml
+```
+
+Or modifying specific resources with patches:
+
+```sh
+# kustomization.yaml
+namespace: my-app
+resources:
+- deployment.yaml
+- service.yaml
+- ingress.yaml
+patches:
+- target:
+  kind: Deployment
+  name: my-deployment
+  patch: |-
+  - op: replace
+    path: /spec/replicas
+    value: 2
+```
+
+All of these operations that would have required many `kubectl` commands to execute
+were reduced to a single `kustomize build` or `kubectl apply -k`. It's pretty
+neat stuff and is also a featureset that Flux heavily takes advantage of. Let's
+see how.
+
+#### Creating the Kustomization for Guestbook
+
+First, create a directory for `guestbook`:
+
+```sh
+mkdir -p "$PWD/repo/apps/base/guestbook"
+```
+
+Afterwards, create a directory to store "registries" of apps installed into
+each cluster environment. We'll explore this soon:
+
+```sh
+mkdir -p "$PWD"/repo/apps/{dev,prod}
+```
+
+Next, fetch the guestbook app from the Kubernetes repository and save it into a
+file called `app.yaml` inside of the `base/guestbook` directory we just created:
+
+```sh
+curl -Lo "$PWD/repo/apps/base/guestbook/app.yaml" \
+  https://raw.githubusercontent.com/kubernetes/examples/refs/heads/master/web/guestbook/all-in-one/guestbook-all-in-one.yaml
+```
+
+We're going to add a sensitive environment variable to our guestbook that's
+mounted from a Kubernetes secret. First, we need to create the secret. Use the
+command below to generate the secret with `kubectl` and encrypt its sensitive
+bits with `sops` like we saw earlier:
+
+```sh
+kubectl create secret generic guestbook-config \
+  --from-literal=env-key=superdupersecret \
+  --dry-run=client \
+  -o yaml | sops --config "$PWD/repo/.sops.yaml" encrypt \
+    --filename-override "$PWD/repo/apps/base/guestbook/secret.yaml" \
+    --output "$PWD/repo/apps/base/guestbook/secret.yaml"
+```
+
+This will produce a secret in our guestbook's directory that looks like the
+pseudo-encrypted stuff we saw earlier.
+
+Finally, create a Kubernetes kustomization that links them all together:
+
+```sh
+cat >"$PWD/repo/apps/base/guestbook/kustomization.yaml" <<-EOF
+resources:
+- app.yaml
+- secret.yaml
+patches:
+  - target:
+      kind: Deployment
+      name: frontend
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+      - op: add
+        path: /spec/template/spec/containers/0/env
+        value:
+          - name: SECRET_ENV_KEY
+            valueFrom:
+              secretKeyRef:
+                name: guestbook-config
+                key: env-key
+  - target:
+      kind: Deployment
+      name: redis-master
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/image
+        value: redis
+EOF
+```
+
+The patches we're adding here add our environment variable and change the Redis
+image used by Guestbook, all without having to modify Guestbook resources
+directly. Behold; the power of Kustomize!
+
+#### Installing Kustomize apps into clusters with Flux
+
+Earlier, we created two directories: `apps/dev` and `apps/prod`. We're going to
+use these directories with Kustomize to define the list of apps that get
+installed into "dev" and "prod" clusters along with any modifications that need
+to be made for these environments.
+
+This is achieved as easily as running the command below:
+
+```sh
+# Add 'guestbook' to dev cluster apps
+cat >"$PWD/repo/apps/dev/kustomization.yaml" <<-EOF
+resources:
+- ../base/guestbook
+EOF
+
+# Add 'guestbook' to prod cluster apps
+cat >"$PWD/repo/apps/prod/kustomization.yaml" <<-EOF
+resources:
+- ../base/guestbook
+EOF
+```
+
+We're now ready to use these kustomizations to install apps into our "dev" and
+"prod" clusters with Flux! This is done by running `flux create kustomization`,
+storing the YAML it creates into our cluster's configuration directory,
+commiting and pushing our changes, and waiting for them to apply.
+
+Run the command below to do this with our "dev" cluster:
+
+```sh
+  flux create kustomization cluster-apps \
+    --context "kind-cluster-dev" \
+    --target-namespace default \
+    --source flux-system \
+    --path ./apps/$env \
+    --prune true \
+    --wait true \
+    --interval 1m \
+    --decryption-provider=sops \
+    --decryption-secret=sops-gpg \
+    --export > "$PWD/repo/clusters/dev/apps-kustomization.yaml"
+```
+
+The `--decryption-provider=sops` and `--decryption-secret=sops-gpg` flags tell
+Flux to decrypt any files that look like they were encrypted by `sops` with the
+`sops-gpg` Kubernetes secret we created earlier.
+
+This will create a file that looks like this:
+
+```yaml
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cluster-apps
+  namespace: flux-system
+spec:
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-gpg
+  interval: 1m0s
+  path: ./apps/dev
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: default
+  wait: true
+```
+
+So, yeah, this is another thing called a `Kustomization`. The Flux maintainers
+[strongly feel](https://fluxcd.io/flux/faq/#are-there-two-kustomization-types)
+that this is correctly named and [is not
+confusing](https://github.com/fluxcd/flux2/issues/321).
+
+If you do ever get confused by the similarities, know that Flux Kustomizations
+will always be in the `kustomize.toolkit.fluxcd.io/v1` API group whereas
+Kubernetes Kustomizations will be in the `kustomize.config.k8s.io/v1beta1` API
+group.
+
+Anyway, repeat these steps to install into "prod", but replace references to
+`kind-cluster-dev` with `kind-cluster-prod`. Commit and push your changes
+afterwards to put Flux to work:
+
+```sh
+git -C "$PWD/repo" add apps clusters &&
+  git -C "$PWD/repo" commit -m "install cluster apps" &&
+  git -C "$PWD/repo" push
+```
+
+Then watch the magic happen. No, really, use `watch` to watch it go:
+
+```sh
+# Run `brew install watch` or `winget install echocat.watch` to watch the
+# Kustomization and Deployment get created
+watch -n 0.5 kubectl --context kind-cluster-dev get kustomization,deployment -A
+```
+
+Eventually, you'll see something like this:
+
+```
+NAMESPACE     NAME                                                     AGE   READY   STATUS
+flux-system   kustomization.kustomize.toolkit.fluxcd.io/cluster-apps   10m   True    Applied revision: mast
+er@sha1:65741dfb235aa0ee78071bcc9155593ce9532835
+flux-system   kustomization.kustomize.toolkit.fluxcd.io/flux-system    10m   True    Applied revision: mast
+er@sha1:65741dfb235aa0ee78071bcc9155593ce9532835
+
+NAMESPACE            NAME                                      READY   UP-TO-DATE   AVAILABLE   AGE
+default              deployment.apps/frontend                  1/1     1            1           10m
+default              deployment.apps/redis-master              1/1     1            1           10m
+default              deployment.apps/redis-replica             2/2     2            2           10m
+flux-system          deployment.apps/helm-controller           1/1     1            1           10m
+flux-system          deployment.apps/kustomize-controller      1/1     1            1           10m
+flux-system          deployment.apps/notification-controller   1/1     1            1           10m
+flux-system          deployment.apps/source-controller         1/1     1            1           10m
+kube-system          deployment.apps/coredns                   2/2     2            2           10m
+local-path-storage   deployment.apps/local-path-provisioner    1/1     1            1           10m
+```
+
+You're ready to move on once you see `frontend` in the list of resources
+returned.
+
+But wait! Did Flux actually decrypt our Secret and mount it to our deployment?
+Run the below to check:
+
+```sh
+kubectl exec deployments/frontend -- sh -c "echo \"The secret is: \$SECRET_ENV_KEY\""
+```
+
+You should see:
+
+```
+The secret is: superdupersecret
+```
+
+It totally did it! **NOW** you're good to proceed!
+
+> ✅ If you'd like to try the app, run the command below then visit
+> Guestbook at http://localhost:8080 in your browser:
+>
+> ```sh
+> kubectl port-forward deployment/frontend 8080:80
+> ```
+>
+> Hit CTRL-C when you're done filling up your guestbook to continue.
+
+#### Scaling production up with Flux
+
+Everything is bigger and bolder in production, so let's use Flux and kustomize
+to scale Guestbook to two replicas without changing anything in the app itself.
+
+Run the command below to add a patch to our production app "registry" so that
+every `frontend` Deployment in Guestbook gets two replicas instead of one:
+
+```sh
+cat >>"$PWD/repo/apps/prod/kustomization.yaml" <<-EOF
+patches:
+  - target:
+      kind: Deployment
+      name: frontend
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 2
+EOF
+
+Then commit and push your changes:
+
+```sh
+git -C "$PWD/repo" add apps clusters &&
+  git -C "$PWD/repo" commit -m "increase replica count in prod" &&
+  git -C "$PWD/repo" push
+```
+
+Wait and watch again:
+
+```sh
+# Run `brew install watch` or `winget install echocat.watch` to watch the
+# Kustomization and Deployment get created
+watch -n 0.5 kubectl --context kind-cluster-prod get kustomization,deployment -A
+```
+
+You'll see in about a minute that the frontend has been scaled up to two
+replicas:
+
+```
+Every 0.5s: kubectl --context kind-cluster-prod get kustomization,depl… Carloss-MacBook-Pro.local: 11:27:13
+                                                                                              in 0.053s (0)
+NAMESPACE     NAME                                                     AGE   READY   STATUS
+flux-system   kustomization.kustomize.toolkit.fluxcd.io/cluster-apps   12m   True    Applied revision: mast
+er@sha1:65741dfb235aa0ee78071bcc9155593ce9532835
+flux-system   kustomization.kustomize.toolkit.fluxcd.io/flux-system    12m   True    Applied revision: mast
+er@sha1:65741dfb235aa0ee78071bcc9155593ce9532835
+
+NAMESPACE            NAME                                      READY   UP-TO-DATE   AVAILABLE   AGE
+default              deployment.apps/frontend                  2/2     1            1           12m
+default              deployment.apps/hello-world               1/1     1            1           12m
+default              deployment.apps/redis-master              1/1     1            1           12m
+default              deployment.apps/redis-replica             2/2     2            2           12m
+flux-system          deployment.apps/helm-controller           1/1     1            1           12m
+flux-system          deployment.apps/kustomize-controller      1/1     1            1           12m
+flux-system          deployment.apps/notification-controller   1/1     1            1           12m
+flux-system          deployment.apps/source-controller         1/1     1            1           12m
+kube-system          deployment.apps/coredns                   2/2     2            2           12m
+local-path-storage   deployment.apps/local-path-provisioner    1/1     1            1           12m
+```
+
+GitOps rules!!!
+
+### Install Helm charts, the GitOps way
+
+{{< post_image name="helm" alt="Flux can do Helm stuff too!" >}}
+
+We've seen how Flux enables installing and modifying "traditional" Kubernetes
+apps in Kubernetes clusters entirely with Git. Flux also has some tricks up its
+sleeve for GitOps-ifying Helm charts in Kubernetes clusters. Let's explore how
+this works by adding Helm's example [hello-world
+chart](https://github.com/helm/examples) to our small collection of apps.
+
+#### Creating Helm resources for Flux
+
+First, create a directory for our `hello-world` app like we did for our previous
+example:
+
+```sh
+mkdir -p $PWD/repo/apps/base/hello-world
+```
+
+Next, create a "source" for the Helm chart repository that Flux will download
+this chart from and save it into our app directory:
+
+```sh
+# We'll use the 'dev' cluster; doesn't matter which since we're exporting it.
+flux --context kind-cluster-dev create source helm helm-examples \
+  --url https://helm.github.io/examples \
+  --export > "$PWD/repo/apps/base/hello-world/source.yaml"
+```
+
+After this, we'll export a `HelmRelease` Flux object that will represent an
+installation of the Helm chart, i.e. a Helm release!
+
+```sh
+# We'll use the 'dev' cluster; doesn't matter which since we're exporting it.
+flux --context kind-cluster-dev create helmrelease hello-world \
+  --chart hello-world \
+  --source HelmRepository/helm-examples \
+  --chart-version 0.1.0 \
+  --interval 1m \
+  --export > "$PWD/repo/apps/base/hello-world/release.yaml"
+```
+
+Finally, we'll link them together with a Kubernetes kustomize config:
+
+```sh
+cat >"$PWD/repo/apps/base/hello-world/kustomization.yaml" <<-EOF
+resources:
+- source.yaml
+- release.yaml
+EOF
+```
+
+An important distinction needs to be made here. Unlike our Guestbook app
+earlier, Kustomize is _only_ used by Flux to install the Helm components that
+it'll use to install our chart. It will **not** render Kubernetes objects from
+the chart itself!
+
+Commit and push your changes. Since we haven't added `hello-world` to the "dev"
+and "prod" registries, nothing will get installed yet. We're just doing this to
+[keep commits
+atomic](https://www.aleksandrhovhannisyan.com/blog/atomic-git-commits/)!
+
+```sh
+git -C "$PWD/repo" add apps
+git -C "$PWD/repo" commit -m "add hello-world app" apps
+# Optionally, push up to the local Git server
+git -C "$PWD/repo" push
+```
+
+#### Installing hello-world into the Kubernetes Clusters
+
+Installing `hello-world` into our clusters is the _exact same process_ as we
+followed before. Easy and auditable!
+
+Add `hello-world` to our app "registries":
+
+```sh
+# Add 'guestbook' to dev cluster apps
+cat >"$PWD/repo/apps/dev/kustomization.yaml" <<-EOF
+resources:
+- ../base/guestbook
+- ../base/hello-world
+EOF
+
+# Add 'guestbook' to prod cluster apps
+cat >"$PWD/repo/apps/prod/kustomization.yaml" <<-EOF
+resources:
+- ../base/guestbook
+- ../base/hello-world
+EOF
+```
+
+Commit and push:
+
+```sh
+git -C "$PWD/repo" add clusters &&
+  git -C "$PWD/repo" commit -m "install cluster apps" &&
+  git -C "$PWD/repo" push
+```
+
+Then wait for the `hello-world` Flux Kustomization and Deployment to show
+up:
+
+```sh
+# Run `brew install watch` or `winget install echocat.watch` to watch the
+# Kustomization and Deployment get created
+watch -n 0.5 kubectl --context kind-cluster-prod get kustomization,deployment,helmrelease -A
+```
+
+Which should produce this after about a minute:
+
+```
+NAMESPACE     NAME                                                     AGE   READY   STATUS
+flux-system   kustomization.kustomize.toolkit.fluxcd.io/cluster-apps   15m   True    Applied revision: mast
+er@sha1:65741dfb235aa0ee78071bcc9155593ce9532835
+flux-system   kustomization.kustomize.toolkit.fluxcd.io/flux-system    15m   True    Applied revision: mast
+er@sha1:65741dfb235aa0ee78071bcc9155593ce9532835
+
+NAMESPACE            NAME                                      READY   UP-TO-DATE   AVAILABLE   AGE
+default              deployment.apps/frontend                  1/1     1            1           15m
+default              deployment.apps/hello-world               1/1     1            1           15m
+default              deployment.apps/redis-master              1/1     1            1           15m
+default              deployment.apps/redis-replica             2/2     2            2           15m
+flux-system          deployment.apps/helm-controller           1/1     1            1           15m
+flux-system          deployment.apps/kustomize-controller      1/1     1            1           15m
+flux-system          deployment.apps/notification-controller   1/1     1            1           15m
+flux-system          deployment.apps/source-controller         1/1     1            1           15m
+kube-system          deployment.apps/coredns                   2/2     2            2           15m
+local-path-storage   deployment.apps/local-path-provisioner    1/1     1            1           15m
+
+NAMESPACE   NAME                                             AGE   READY   STATUS
+default     helmrelease.helm.toolkit.fluxcd.io/hello-world   15m   True    Helm install succeeded for relea
+se default/hello-world.v1 with chart hello-world@0.1.0
+
+```
+
+Notice that our `hello-world` deployment is ready with `1/1` replicas running.
+
+That's how you Flux!
+
+### Clean Up
+
+{{< post_image name="broom" alt="You've made it to the end! Thanks for reading." >}}
+
+_(**Source**: iStockPhoto.)_
+
+We're done! Let's clean up.
+
+Delete both of our clusters:
+
+```sh
+KIND_EXPERIMENTAL_PROVIDER=podman kind delete cluster --name cluster-dev
+KIND_EXPERIMENTAL_PROVIDER=podman kind delete cluster --name cluster-prod
+```
+
+Turn down the local Git server:
+
+```sh
+podman rm -f -t 1 gitserver
+```
+
+Delete the folders for our repo and SSH keys:
+
+```sh
+rm -rf $PWD/{repo,keys}
+```
+
+Delete the Podman machine you created to run everything:
+
+```sh
+podman machine rm -f flux
+```
+
+Delete the GPG key you created for encrypting your secrets:
+
+```sh
+fp=$(gpg --list-keys cluster | grep -A 1 pub | tail -1 | tr -d ' ')
+gpg --delete-secret-and-public-keys --batch --yes "$fp"
+```
+
+Then, finally, and optionally, uninstall the tools you installed to do this
+guide:
+
+**Mac**: `brew uninstall kind podman gnupg sops`
+**Windows**: `winget uninstall Kubernetes.Kind FluxCD.Flux GnuPG.GnuPG
+Mozilla.SOPS`
 
 ## Next Steps
 
@@ -776,14 +1362,29 @@ As you saw, Flux makes managing Kubernetes clusters with Git straightforward. I
 only scratched the surface of what you can do with it, though. Here are some
 next steps you can take if this was interesting to you:
 
-- **Try its built-in Helm features**. Flux can also manage Helm repositories and
-  configure apps from Helm chart. I definitely recommend checking this out if
-  you use Helm charts heavily!
-
 - **Explore its multi-tenancy and RBAC features**. Flux assumes that it has full
   control of the cluster it's installed into by default. This obviously won't
   work if you're running clusters in more secure environments. Fortunately, you
-  can tell Flux to 
+  can modify the resources that Flux creates during bootstrap so that they are
+  scoped to a single namespace. Learn more about multi-tenancy with Flux
+  [here](https://fluxcd.io/flux/installation/configuration/multitenancy/).
 
-[^0]: Some distros, like Rancher's k3s, eliminate the forms, even! `curl k3s.io
-    | bash` and you're up and running in five minutes.
+- **Try Flux with managed Git providers**. You'll probably use Flux with GitHub,
+  GitLab, or some other collaborative Git platform. It works _great_ with those
+  services. Check out Flux's [official Getting Started
+  guide](https://fluxcd.io/flux/get-started/) on GitHub that covers that.
+
+- **Operators for Flux? Sure, why not?** Operators are an awesome pattern for
+  installing software on Kubernetes that requires a desired state. Flux is an
+  excellent candidate for being managed this way; in fact, it has its own
+  operator that's worth checking out!
+  [Here's](https://github.com/controlplaneio-fluxcd/flux-operator) a link to its
+  GitHub Project.
+
+## Questions? Comments? Feedabck? All are welcome!
+
+Thanks for reading this week's CNCF Weekly on Flux! I hope you found this useful
+and put it to practice!
+
+Find me on LinkedIn at [@carlosinhtx](https://linkedin.com/in/carlosinhtx) to
+let me know if there's something you really liked or something you wish you saw!
