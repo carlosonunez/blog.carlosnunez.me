@@ -1,7 +1,7 @@
 ---
 title: "CNCF Weekly #1: Flux"
 date: 2025-10-29T13:41:00-06:00
-draft: true
+draft: false
 image: "/images/cncf-weekly-1-flux/header.png"
 categories:
 - kubernetes
