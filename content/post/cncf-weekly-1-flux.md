@@ -42,19 +42,20 @@ to retire your Jenkins pipelines.
 
 {{< post_image name="k8s_made_easy" alt="kubeadm never had it so good." >}}
 
-Say you just spun up a brand-spankin' new Kubernetes cluster. `kubectl`
-works, and you can _feel_ the power hiding underneath it. All is good.
+You just spun up a brand-spankin' new Kubernetes cluster. `kubectl` works. You
+can _feel_ the power within your nodes waiting to be unleashed. All is good.
 
 It's time to install some stuff into it. [Probably something AI
-related](https://github.com/kserve/kserve) to satisfy your company's "enterprise
-AI strategy."
+related](https://github.com/kserve/kserve), since that seems like a good idea
+these days.
 
 This is easy work: grab (or make) its Helm chart, `helm upgrade --install` it
 and you're off to the races.
 
 This will _not_ be easy work when your AI-related thing finds its
-[PMF](https://en.wikipedia.org/wiki/Product-market_fit) and now needs 10
-Kubernetes clusters with hundreds of apps to keep up.
+[product-market fit](https://en.wikipedia.org/wiki/Product-market_fit) and now
+needs 10 Kubernetes clusters with hundreds of microservices and even more
+dependencies to keep up.
 
 You'll need to automate. And you'll be overwhelmed by your options!
 
@@ -138,18 +139,17 @@ purpose:
 
 ## Getting Started
 
-|                   |                                                                             |
-| :-----            | :-----                                                                      |
-| **Time Required** | 1-2 hours                                                                   |
-| **Source**        | [GitHub](https://github.com/carlosonunez/cncf-weekly-guides/tree/main/flux) |
+You're going to use Flux to configure a "traditional" Kubernetes app with
+secrets and a Helm chart into two local Kubernetes clusters, `dev` and `prod`,
+entirely with Git, all on your machine.
 
-You're going to use Flux to configure three apps --- `app-a`, `app-b`, and
-`app-c` --- into two local Kubernetes clusters, `dev` and `prod`, entirely with
-Git.
+Buckle up; this ride's gonna be wild!
 
-We're also going to see how Flux works with
-[`sops`](https://github.com/getsops/sops), an excellent encryption tool, to
-make storing Kubernetes Secrets in your Git repository safe and secure.
+|                       |                                                                             |
+| :-----                | :-----                                                                      |
+| **Time Required**     | 1-2 hours                                                                   |
+| **Source**            | [GitHub](https://github.com/carlosonunez/cncf-weekly-guides/tree/main/flux) |
+| **Accounts Required** | None.                                                                       |
 
 Let's jump in.
 
@@ -158,33 +158,44 @@ Let's jump in.
 - [Create our workspace](#create-a-workspace)
 - [Set up `dev` and `prod` Kubernetes clusters on our machine](#setting-up-our-infrastructure)
 - [Start a local Git server to configure our clusters with](#setting-up-a-local-git-server)
-- [Create a configuration repo](#create-a-configuration-repo)
 - [Configure our machine to encrypt Kubernetes secrets](#configure-kubernetes-secrets-encryption)
 - [Add encrypted Kubernetes secrets](#add-encrypted-kubernetes-secrets)
-- [Install Flux into our `dev` and `prod` clusters](#install-and-bootstrap-flux)
-- [Configure our clusters](#configure-our-clusters)
-- [Make a change and see it apply!](#do-the-gitops)
+- [Bootstrap Flux into our `dev` and `prod` clusters](#install-and-bootstrap-flux)
+- [Install and configure a "traditional" k8s app, the GitOps way](#install-traditional-k8s-apps)
+- [Install and configure Helm charts, the GitOps way](#install-helm-charts)
+- [Clean Up](#clean-up)
 
-#### Install tools
+### Install tools
 
 Let's install the tools we'll use in this guide.
 
-##### Podman
+#### Podman
 
 {{< post_image name="containers" alt="Containers. Containers everywhere." >}}
 
 **Mac**: `brew install podman`
 **Windows**: `winget install RedHat.Podman`
 
+> 📝 **Apple Silicon Mac Users**
+>
+> Podman uses Rosetta by default to run containers built with the `x86`
+> processor architecture. If you do not want to use this, run the command below
+> to have Podman use `qemu` instead:
+>
+> ```sh
+> cat >$HOME/.config/containers/containers.conf <<-EOF
+> [machine]
+> rosetta=false
+> EOF
+> ```
+
 Run the command below after installing Podman to set up a machine that will run
 the Podman container engine:
 
 ```sh
-cat >$HOME/.config/containers/containers.conf <<-EOF
-[machine]
-rosetta=false
-EOF
-podman machine init flux
+# I recommend using a machine with at least 6 CPUs and 8GB of RAM.
+# You can lower or increase these values if you wish.
+podman machine init flux --cpus 6 --mem_size 8192
 podman machine start flux
 ```
 
@@ -194,7 +205,8 @@ Finally, confirm that Podman's installed:
 podman run --rm hello
 ```
 
-You're good to go when you see friendly seals welcome you to Podman.
+You're good to go when friendly seals greet you after running your first
+container with Podman.
 
 ```text
 Resolved "hello" as an alias (/etc/containers/registries.conf.d/000-shortnames.conf)
@@ -224,28 +236,29 @@ X/Twitter: @Podman_io
 Mastodon:  @Podman_io@fosstodon.org
 ```
 
-##### Kind
+#### Kind
 
 We'll use this to create our Kubernetes clusters in Docker.
 
 **Mac**: `brew install kind`
 **Windows**: `winget install Kubernetes.kind`
 
-##### Flux
+#### Flux
 
 **Mac**: `brew install fluxcd/tap/flux`
 **Windows**: `winget install FluxCD.Flux`
 
-##### sOps and GnuPG
+#### sOps and GnuPG
 
 We'll use these tools together, so it makes sense to install them together!
 
 **Mac**: `brew install gnupg sops`
 **Windows**: `winget install GnuPG.GnuPG Mozilla.SOPS`
 
-#### Create a workspace
+### Create a workspace
 
-First things first; let's create a sandbox to experiment in:
+First things first; run the command below to create a sandbox to experiment in
+and enter it:
 
 ```sh
 mkdir $PWD/flux; cd $PWD/flux
@@ -253,16 +266,17 @@ mkdir $PWD/flux; cd $PWD/flux
 
 Super easy already!
 
-#### Setting up our infrastructure
+### Setting up our infrastructure
 
-Let's create our two clusters with `kind`. Run the command below to do that:
+Now we need our two clusters. Run the command below to create two clusters with
+`kind` called `cluster-dev` and `cluster-prod`
 
 ```sh
 kind create cluster --name cluster-dev
 kind create cluster --name cluster-prod
 ```
 
-You're good to continue if you see output similar to this for both clusters:
+You'll see output like this after each command:
 
 ```
 using podman due to KIND_EXPERIMENTAL_PROVIDER
@@ -278,19 +292,47 @@ Set kubectl context to "kind-cluster-dev"
 # ...truncated; repeats for "cluster-prod"
 ```
 
-#### Setting up a local Git server
+When it finishes, run `kubectl get nodes --context cluster-dev` to confirm that
+your "dev" cluster is ready and `kubectl get nodes --context cluster-prod` to
+do the same for "prod".
+
+You'll see something like this if everything's properly set up:
+
+```
+$: kubectl --context kind-cluster-dev get nodes
+NAME                        STATUS   ROLES           AGE     VERSION
+cluster-dev-control-plane   Ready    control-plane   2m32s   v1.34.0
+```
+
+### Setting up a local Git server
 
 Flux synchronizes Kubernetes cluster configuration with manifests in Git repos.
-Now that we have our example Kubernetes clusters, let's stand up a local Git
-repo to store our cluster configurations into!
+This means we'll need a Git repository to store configurations and stuff into,
+which we'll do in this step!
 
-> **NOTE**: Most tutorials online will have you do this on a hosted Git
-> repository service like GitHub or GitLab. I definitely recommend checking
-> those guides out at some point, as this is how Flux is more commonly used.
->
-> For our little toy environment, however, we're using a local Git repo to save
-> time and avoid creating accounts, adding SSH keys to our profile and all of
-> the other chores you'll do when you do that exercise yourself!
+Most tutorials will assume that you have a GitHub or GitLab account and will
+have you initialize Flux with new repos in these services. I'd like to take a
+different approach by having us use a local Git repository running in a
+container for four reasons:
+
+1. There are so many good tutorials that do a great job of showing you how to
+   "bootstrap" with GitHub, GitLab or Gitea,
+2. Many developers are using Git service providers that don't have Flux
+   "providers" for them yet, like Azure DevOps or AWS CodeCommit. The
+   instructions in this guide will work for these providers,
+3. Some unique situations, like edge or disconnected computing, call for a local
+   Git server that receives updates from some other channel. The steps in this
+   guide will work great for these scenarios, and
+4. I did say we were going on a wild ride!!!
+
+We're going to do this in four steps:
+
+- Create an SSH keypair to authenticate us with our Git server,
+- Start a containerized Git server and confirm that our Kubernetes clusters can
+  access it,
+- Create a Git repository within the server (i.e. the stuff that happens when
+  you click "Create Repository" in GitHub!), and
+- Clone the repository on our machine and push our first change.
 
 #### Create SSH Keys
 
@@ -314,210 +356,419 @@ configurations from in both of our servers.
 ```sh
 podman run --rm --network=kind -p 2222:22 -d \
   --name gitserver \
-  -v $PWD/repo:/git-server/repos/infra \
   -v $PWD/keys:/git-server/keys \
   jkarlos/git-server-docker
 ```
 
-> **TIP**: The `--network=kind` argument instructs Podman to connect the
-> container's virtual network interface to the same network that our Kind
-> clusters are using. This will make it really easy for our Kubernetes clusters
-> to access our Git server, as you'll see shortly!
+Like running a 100ft CAT-6 cable to a five-port switch and hoping a cat didn't
+decide to bite through it, the `--network=kind` argument will connect our Git
+server to our Kubernetes clusters, not that I had to do that recently or
+anything.
 
-Once that's done, use the command below to confirm that our Git server is up and
-running and accepts our SSH key:
-
+Use the command below to confirm that our Git server is up and
+running and accepts our SSH key. 
 ```sh
 # You might need to run this a few times before you see the welcome message.
 ssh -i $PWD/keys/id_rsa git@127.0.0.1 -p 2222 | grep 'Welcome'
 ```
+You're good to go when you see a `Welcome to Git` message from the server.
 
-#### Create a configuration repo
+#### Create a configuration repo in the Git server
 
-Our Git server humming idly. Let's put it to work by creating a repo for our Git
-configurations and push our changes up to it.
-
-First, create the directory and enter it:
-
-```sh
-mkdir -p $PWD/repo; pushd $PWD/repo
-```
-
-Then use `git init` to turn it into a Git repo and add an empty commit to it to
-make it official:
+Now that our Git server is humming idly ready to sync deltas and hunks and stuff
+like that, run the command block below to create and initialize the repo that
+Flux will synchronize with our Kubernetes clusters:
 
 ```sh
-git init
-git commit -m 'first commit' --allow-empty
+podman exec gitserver mkdir -p /git-server/repos/platform
+podman exec gitserver git -C /git-server/repos/platform init --bare
+podman exec gitserver chown -R git:git /git-server/repos/platform
 ```
 
-Normally, we would run the commands below afterwards to push our changes up:
+For you curious cats out there, `--bare` basically makes the contents within a
+typical `.git` directory, i.e. the Git "stuff", the entirety of what's in this
+folder. You'll only ever need this whenever you're creating a Git repository
+that will be hosted for others to work off of, like we're doing now. Now you see
+some of why GitHub took over the world in the early 2010s!
+
+#### Clone the repo and commit our first change
+
+> 📝 **Git Users**
+>
+> Run `export GIT_CONFIG_GLOBAL=''` if you have features like commit signing
+> turned on and want to turn those off while following this guide.
+
+Anyway, enough lore. Clone the repo that we just created using the SSH key we
+made earlier:
 
 ```sh
-# won't work; don't run this!
-git remote add origin git@gitserver:infra
-git push -u origin master # might be 'main' on your machine
+git clone ssh://git@localhost:2222/git-server/repos/platform \
+  --config core.sshCommand="ssh -i $PWD/keys/id_rsa" \
+  "$PWD/repo"
 ```
 
-However, our Git server is running locally, which means it already has our
-changes! Run the command below to make sure of that:
+Then create, then push, an empty commit to make it ready for GitOps!
 
 ```sh
-docker exec gitserver git -C /git-server/repos/infra log --oneline
+pushd "$PWD/repo"
+git commit --allow-empty -m 'initial commit'
+git push
+popd
 ```
 
-This should produce something like the below:
+#### Confirm that Kubernetes clusters can reach the Git server
+
+Since Flux will clone our Git repo within our Kubernetes clusters, checking that
+they can communicate with our Git server is a good idea.
+
+We'll do everything in the `cluster-dev` cluster first.
+
+First, create a test Pod that we'll use to run some commands:
 
 ```sh
-64d49ab first commit
+kubectl --context kind-cluster-dev run --image=alpine/git git-test -- \
+    sleep infinity
 ```
 
-Cool, right?
+Run `kubectl get pods` and wait for the `git-test` Pod to enter the `Ready`
+state.
 
-#### Confirming connectivity between the Git server and Kubernetes
-
-We'll also want to make sure that pods in our Kubernetes clusters can reach the
-Git server. We can do that with a test Pod relatively quickly.
-
-Let's start with the `dev` cluster. First, start a `sleep` Pod using the `git`
-container image from the Alpine Linux project that will stay up while we conduct
-the test:
+Next, copy our SSH private key into the Pod, as we'll need it to clone the repo
+we created within the Pod:
 
 ```sh
-kubectl --context kind-cluster-dev run --image=alpine/git --command git-test -- sleep infinity
+kubectl --context kind-cluster-dev cp "$PWD/keys/id_rsa" git-test:/tmp/key
 ```
 
-Use this command to wait for the Pod to start:
+Next, attempt to clone the repo within our `git-test` test Pod with the command
+below:
 
 ```sh
-kubectl --context kind-cluster-dev wait  --for=jsonpath='{.status.phase}'=Running pod/git-test
+kubectl --context kind-cluster-dev exec git-test -- \
+    git clone "ssh://git@gitserver/git-server/repos/platform" \
+    /tmp/repo
 ```
 
-You'll see `pod/git-test condition met` when the Pod is up and running.
+Notice the difference in our `ssh://` address here. Podman creates a lightweight
+DNS server to make it possible for containers in a shared network to talk to
+each other by name. The `--network=kind` option we specified earlier enables us
+to take advantage of this, which I'm happily doing here because service
+discovery is awesome and calling stuff by IP address is not.
 
-Next, copy the SSH private key we created earlier into the Pod:
+Anyway, you should see the repo clone within the Pod like you did on your
+machine. You can run `git log` within the Pod to make triply-sure that the repo
+was, indeed, cloned:
 
 ```sh
-kubectl --context kind-cluster-dev cp $PWD/keys/id_rsa git-test:/tmp/key
+kubectl --context kind-cluster-dev exec git-test -- git -C /tmp/repo log -1
 ```
 
-Then use `kubectl exec` to try and clone our repo within our Pod:
+You'll see the `initial commit` commit you made earlier. Success! We can now
+delete the `git-test` Pod, as we no longer need it:
 
 ```sh
-kubectl --context kind-cluster-dev exec -it git-test -- \
-  git clone --config core.sshCommand='ssh -i /tmp/key' git@gitserver/git-server/repos/infra /tmp/repo
+kubectl --context kind-cluster-dev delete pod git-test
 ```
 
-`git` will clone the repo shortly afterwards once you accept the scary warning
-message:
+Repeat everything above on the `prod` server if you wish by replacing `--context
+kind-cluster-dev` with `--context kind-cluster-prod` in the commands above.
 
-```
-remote: Counting objects: 2, done.
-remote: Total 2 (delta 0), reused 0 (delta 0)
-Receiving objects: 100% (2/2), done.
-```
+### Configure Kubernetes Secrets Encryption
 
-Finally, check the repo's log to confirm that our initial commit is there:
+Flux works with [`sops`](https://github.com/getsops/sops) to enable encrypted
+Kubernetes secrets in Git repositories to be synchronized with Kubernetes
+clusters. We're now going to configure `sops` to configure anything that looks
+like a Kubernetes secret in our configuration repo.
+
+#### Create a GPG Key
+
+`sops` supports many encryption providers, like AWS KMS, HashiCorp Vault and
+[`age`](https://github.com/FiloSottile/age), a modern encryption mechanism.
+We're going to keep it old-school and encrypt our Kubernetes secrets with a GPG
+keypair.
+
+Run the command below to create a GPG key without a passphrase:
 
 ```sh
-kubectl --context kind-cluster-dev exec -it git-test -- git log -1
+gpg --quick-generate-key --batch --passphrase='' cluster
 ```
 
-This will give you something like this:
-
-```
-commit 1bc39f3df6455e85960f04bb9eb31db4cfff6cee (HEAD -> main, origin/main, origin/HEAD)
-Author: Carlos Nunez <13461447+carlosonunez@users.noreply.github.com>
-Date:   Fri Dec 12 13:39:44 2025 -0600
-
-    first commit
-```
-
-If it does, then congratulations, the `dev` Kubernetes cluster and your local
-Git server can talk to each other!
-
-Repeat the process with the `prod` server by changing `kind-cluster-dev`
-references to `kind-cluster-prod` in the commands you just ran.
-
-#### Add encrypted Kubernetes secrets
-
-Now that our repo is set up, we're going to set ourselves up to store some
-Kubernetes Secrets into it securely.
-
-##### Create a GPG key
-
-First, use the command below to create a GPG key that we'll use to encrypt our
-Kubernetes secrets with.
+Afterwards, run the command below to capture its fingerprint, which we'll need
+when we configure `sops`:
 
 ```sh
-gpg --quick-generate-key --passphrase='' --batch cluster
+fp=$(gpg --list-keys cluster | grep -A 1 pub | tail -1 | tr -d ' ')
 ```
 
-Run the command below to confirm that your key was created and is being tracked
-by GnuGPG:
+#### Create sOps creation rules
+
+`sops` uses "creation rules" to decide how and with which encryption providers
+data within files should be encrypted. These are defined in a YAML file, which
+we'll use the command below to create now:
 
 ```sh
-gpg --list-keys cluster
-```
-
-You should get something like the result below:
-
-```
-gpg: checking the trustdb
-gpg: marginals needed: 3  completes needed: 1  trust model: pgp
-gpg: depth: 0  valid:   3  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 3u
-pub   ed25519 2025-12-12 [SC] [expires: 2028-12-11]
-      3BD08674578887B3BE5F6A62AA344CC889F611DC
-uid           [ultimate] cluster
-sub   cv25519 2025-12-12 [E]
-```
-
-The alphanumeric string underneath `pub` is our key's fingerprint. Copy the
-string, as we'll need it when we configure sOps to use this key.
-
-#### Configure sOps
-
-Next, we'll need to tell sOps to use the GPG key we created when encrypting and
-decrypting Kubernetes secrets in our repo. This is accomplished by defining
-a "creation rule" in a file called `.sops.yaml` at the root of our repository.
-
-To do that, copy the command below, replace the stuff after `pgp` with the
-fingerprint you copied earlier, and run it:
-
-
-```sh
-cat >$PWD/repo/.sops.yaml <<-EOF
+cat >"$PWD/repo/.sops.yaml" <<-EOF
 creation_rules:
-- path_regex: .*.yaml$
-  encrypted_regex: ^(data|stringData)$
-  pgp: **Paste your fingerprint here**
+  - path_regex: .*.yaml$
+    pgp: $fp
+    encrypted_regex: ^(data|stringData)$
 EOF
 ```
 
-### Create a Git project for our infrastructure
+This creation rule tells `sops` to process any YAML file in our repo but to
+**only** encrypt any `data` or `stringData` keys found within them.
 
-### Creating the directory structure
+I absolutely love this feature. This makes it possible to document content
+within YAML files while hiding stuff that shouldn't be seen.
+
+See for yourself! Run this to dry-run having `sops` encrypt a Kubernetes secret:
 
 ```sh
-cd flux
-mkdir -p clusters/{dev,prod}
-mkdir -p apps/{app-a,app-b,app-c}
-mkdir secrets
+echo -en 'foo: bar\ndata: supersecret' | sops encrypt --filename-override ./secret.yaml
 ```
 
-### Bootstrapping our "apps"
+This will produce:
 
-### Bootstrapping our "secrets"
+```yaml
+foo: bar
+data: ENC[AES256_GCM,data:iQ/bZlTtLOPuWNk=,iv:RxeJSNfa9cxzE9Zom90He2+fw9Gg/qH+iiYeHgCJ2+E=,tag:Gh88xiA1PhS4eld0wNlJtA==,type:str]
+sops:
+    lastmodified: "2025-12-18T00:50:13Z"
+    mac: ENC[AES256_GCM,data:YCgDODd4AnqhXYFZfgL0t8pxNoz6wKFga7RkZ3d0kFDSUlCSe7sRM/vr045b2pQdMDDq3g0cGl5GpKS9r3xhf9SlAsOIOu9+MD6I3HcdjVL8vgO1lEcN1yS8BdUWK5hGrT38T8n6MaFBOHvkk7lQ54/NOjk/5hBIqbDUzyuh8lc=,iv:VYsQA15FWYcdPp3JOdIqJTnbj3LLP+dqR2bRPjzEZSI=,tag:VXeGQvfu3eCCZI8RfFonlw==,type:str]
+    pgp:
+        - created_at: "2025-12-18T00:50:13Z"
+          enc: |-
+            -----BEGIN PGP MESSAGE-----
 
-### Installing `fluxctl`
+            hF4D0fpShJqYulISAQdAZesPSjx1SbzeStpXxvLlRwAQoa+F17nq/tcIbvb0aS8w
+            aDFw9I0A8O1Q1ROeU0EGePYIKk/RO/OvyLc/hNLpfHnmfGgY8hsF/P2nMZzmYy7T
+            0lwByjxoE23mQ/dcNWZjAvH0l41g0Js6c6EU0LZTejf2uyDaNM0qrWS+b/gqp8oM
+            9iHvh6pQ5km4kaI1Ap285d4cZT0xa6wu5M+T4hCZyKBU1tTluupAdv44hwSpbA==
+            =nMeT
+            -----END PGP MESSAGE-----
+          fp: D8630B5C2954B6091E8913EFE1FE98BBFDCADE05
+    encrypted_regex: ^(data|stringData)$
+    version: 3.11.0
+```
 
-### Bootstrapping Flux
+Notice how `foo`'s value is in plaintext while the value for `data` is encrypted
+garbage. This mathematical byproduct is what will let us commit our Kubernetes secrets
+to our Git repository without the fear of a nasty data breach.
 
-### Creating our cluster Kustomizations
+Speaking of commits, run the below to commit our `.sops.yaml` and push into our
+Git server:
 
-### Seeing our changes
+```sh
+git -C "$PWD/repo" add .sops.yaml
+git -C "$PWD/repo" commit -m "add sOps config for secrets"
+git -C "$PWD/repo" push
+```
 
-### Making changes
+### Install and Bootstrap Flux
+
+#### Doing the Installation
+
+We've finally arrived at the fun stuff. It's time to set up Flux.
+
+Once again, we'll start with the `dev` server. First, use `flux check --pre` to
+ensure that we're good to install Flux on this server:
+
+```sh
+flux check --pre --context kind-cluster-dev
+```
+
+Unsurprisingly, you should see the below to confirm that you're good to go:
+
+```
+► checking prerequisites
+✔ Kubernetes 1.34.0 >=1.32.0-0
+✔ prerequisites checks passed
+```
+
+If you do, run `flux bootstrap` to get Flux up and running in your "dev"
+cluster:
+
+```sh
+flux bootstrap git \
+    --url=ssh://git@gitserver/git-server/repos/platform \
+    --path="./clusters/$env" \
+    --branch master \
+    --private-key-file="/keys/id_rsa" \
+    --context "kind-cluster-$env" \
+    --author-email 'clusterops@example.com' \
+    --author-name 'Cluster Ops Bot' \
+    --silent
+```
+
+> 📝 **NOTE**: Git servers are  hardcoded to name their default branches
+> `master`. I'll update this guide in the future to use `main` instead!
+
+You'll see Flux create several components in your cluster and, in true GitOps
+fashion, commit those changes back into your repository, like the output below
+shows:
+
+```
+► cloning branch "master" from Git repository "ssh://git@gitserver/git-server/repos/platform"
+✔ cloned repository
+► generating component manifests
+✔ generated component manifests
+✔ committed component manifests to "master" ("12c9bb6ad390f649c0f7f1bc0cd5b586fb75ac19")
+► pushing component manifests to "ssh://git@gitserver/git-server/repos/platform"
+► installing components in "flux-system" namespace
+✔ installed components
+✔ reconciled components
+► determining if source secret "flux-system/flux-system" exists
+► generating source secret
+✔ public key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC9znag8QuiXpbeBNynT0WWh75ByQOdWpQp4cY62Mh6lEmaOmcEuAjxqVVU1uBHGCyW9KQA65e6yeKJwqeKBOnN7slthWGpQVfCUBE/SNWAHfkvzOIxWMVEY7wOg5L/XZCPjnBmQ1wJFSgH3nYiDj8eETc41FS8187nX0OG3ZAj3em5ojGobwAw1ZEM2cbPV8rxi7Pt9UXsnXyVZDWgOfdvaT3RCj9PmUBDsLfrtQSv2rFpVcIzyznFmD/zs3pfpnYWW+9rUSQm7jSsURsZaE8vn/JhIlA/c7LAcH7rNgL0nCa4gD3ttp0zMZmlpceeE/cGl1ciMbq7qHb/yrIbkHYHhqt+Li+PXiER0CUZPo+3JFycvLzJ1WdPnelpZ6iq9Q49/n/WgDYi2/zj7Kkmaqi+DaByVhe2g/fWp/Yrp4ZhKVwtOKPFk6IdLXOV7z9qi90g/tPtLT/Fze2eFdQ3z+Sdlr7PLP/C9uof+QSaIuzMHynSbvw9Zq9LeIIuCuEBIxM=
+► applying source secret "flux-system/flux-system"
+✔ reconciled source secret
+► generating sync manifests
+✔ generated sync manifests
+✔ committed sync manifests to "master" ("32dea9ae3d59a15e07f9ecd710aee10111069575")
+► pushing sync manifests to "ssh://git@gitserver/git-server/repos/platform"
+► applying sync manifests
+✔ reconciled sync configuration
+◎ waiting for GitRepository "flux-system/flux-system" to be reconciled
+✔ GitRepository reconciled successfully
+◎ waiting for Kustomization "flux-system/flux-system" to be reconciled
+✔ Kustomization reconciled successfully
+► confirming components are healthy
+✔ helm-controller: deployment ready
+✔ kustomize-controller: deployment ready
+✔ notification-controller: deployment ready
+✔ source-controller: deployment ready
+✔ all components are healthy
+```
+
+This can take several minutes to finish depending on the speed of your Internet
+connection.
+
+#### Modifying Flux components...with GitOps
+
+Since Flux added new commits to your repository, we'll need to use `git pull` to
+retrieve them. Run the below to do that:
+
+```sh
+git -C "$PWD/repo" pull
+```
+
+> ✅ You'll need to add `--rebase` to the end of this if you've added some
+> commits of your own to the repo.
+
+Which will result in something like this:
+
+```
+remote: Counting objects: 22, done.
+remote: Compressing objects: 100% (16/16), done.
+remote: Total 22 (delta 1), reused 0 (delta 0)
+Unpacking objects: 100% (22/22), 53.79 KiB | 4.89 MiB/s, done.
+From ssh://localhost:2222/git-server/repos/platform
+   f4aa73d..0af5ba2  master     -> origin/master
+Updating f4aa73d..0af5ba2
+Fast-forward
+ clusters/dev/flux-system/gotk-components.yaml  | 10195 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ clusters/dev/flux-system/gotk-sync.yaml        |    27 +
+ clusters/dev/flux-system/kustomization.yaml    |     5 +
+ clusters/prod/flux-system/gotk-components.yaml | 10195 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ clusters/prod/flux-system/gotk-sync.yaml       |    27 +
+ clusters/prod/flux-system/kustomization.yaml   |     5 +
+ 6 files changed, 20454 insertions(+)
+ create mode 100644 clusters/dev/flux-system/gotk-components.yaml
+ create mode 100644 clusters/dev/flux-system/gotk-sync.yaml
+ create mode 100644 clusters/dev/flux-system/kustomization.yaml
+ create mode 100644 clusters/prod/flux-system/gotk-components.yaml
+ create mode 100644 clusters/prod/flux-system/gotk-sync.yaml
+ create mode 100644 clusters/prod/flux-system/kustomization.yaml
+```
+
+As you can see, Flux add several files into `dev` and `prod` directories
+underneath `clusters`. These are all of the components that Flux is using to
+support the Flux installation in your clusters.
+
+You can change any of these files to customize your Flux install and leave
+`kubectl edit` or `kubectl patch` in the dust where they belong!
+
+Let's see that in action now by using the command below to modify the DNS
+configuration for our Flux components so that it doesn't fail to resolve records
+in certain network configurations (#thanksalpine):
+
+```sh
+cat >"$PWD/repo/clusters/$env/flux-system/kustomization.yaml" <<-EOF
+resources:
+- gotk-components.yaml
+- gotk-sync.yaml
+patches:
+- target:
+    kind: Deployment
+    labelSelector: app.kubernetes.io/part-of=flux
+  patch: |
+    - op: replace
+      path: /spec/template/spec/dnsConfig
+      value:
+        options:
+          - name: ndots
+            value: "1"
+EOF
+
+After you commit and push these changes and wait a minute or so:
+
+```sh
+git -C "$PWD/repo" commit -m "Work-around DNS issues in Flux components" \
+    *kustomization.yaml
+git -C "$PWD/repo" push
+```
+
+You'll see after running `kubectl get deployment -n flux-system
+source-controller -o yaml | grep -A 5` that the patch that we added has been
+applied
+
+```
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "1"
+      dnsPolicy: ClusterFirst
+      nodeSelector:
+```
+
+GitOps!!!!
+
+
+(Run `kubectl delete pods -n flux-system --all` to apply these changes, as
+changes to Deployments don't pass down to running Pods.)
+
+#### Create a sOps decryption secret for Flux
+
+Now that Flux is running, we'll need to create a Secret that resources with
+`sops`-encrypted Kubernetes secrets being managed by Flux, or "Kustomizations",
+can use to decrypt those Secrets before resources are created.
+
+Run the command below to do that in "dev":
+
+```sh
+fp=$(gpg --list-keys cluster | grep -A 1 pub | tail -1 | tr -d ' ')
+gpg --export-secret-keys --armor "$fp" |
+    kubectl --context kind-cluster-dev create secret generic sops-gpg \
+        -n flux-system
+        --from-file=sops.asc=/dev/stdin
+```
+
+Then in "prod":
+
+```sh
+fp=$(gpg --list-keys cluster | grep -A 1 pub | tail -1 | tr -d ' ')
+gpg --export-secret-keys --armor "$fp" |
+    kubectl --context kind-cluster-prod create secret generic sops-gpg \
+        -n flux-system
+        --from-file=sops.asc=/dev/stdin
+```
+
+Congrats! Flux is now set up and ready to manage apps in our cluster.
+
+- [Install and configure a "traditional" k8s app, the GitOps way](#install-traditional-k8s-apps)
+- [Install and configure Helm charts, the GitOps way](#install-helm-charts)
+- [Clean Up](#clean-up)
+
 
 ## Next Steps
 
