@@ -3,6 +3,7 @@ title: "CNCF Weekly #1: Flux"
 date: 2025-10-29T13:41:00-06:00
 draft: false
 image: "/images/cncf-weekly-1-flux/header.png"
+linkedin_post_url: https://www.linkedin.com/posts/carlosinhtx_neurons-firing-from-a-keyboard-activity-7407555266872922113-4cJ-
 categories:
 - kubernetes
 - cncf-weekly
