@@ -2,6 +2,7 @@
 title: Using Lima and Bash dotfiles to go fast with Claude Code
 date: 2026-03-26T15:30:36-05:00
 draft: false
+image: /images/using-lima-and-bash-dotfiles-to-go-fast-with-claude-code/header.png
 categories: 
   - agentic development
   - agent isolation
