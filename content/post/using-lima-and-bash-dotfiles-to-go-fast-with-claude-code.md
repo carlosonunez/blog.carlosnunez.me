@@ -25,11 +25,12 @@ repo](https://github.com/carlosonunez/bash-dotfiles).
 
 Though I started [messing with Claude Code last
 year](https://blog.carlosnunez.me/post/vibe-code-day-1/), between not being
-happy with how purely vibe-coding my Status tool was going and, as usual, life
-got in the way, I ended up scrapping it. Claude Code got a lot better since
-then, so during this year's annual week-logjn coding sabbatical, I thought to
-give it another try, but, instead, using it as a pair-programming partner
-instead of a "do it for me" easy button.
+happy with how purely vibe-coding my Status tool was going and, as usual, Life
+Getting In The Way™, I ended up scrapping it.
+
+Claude Code got a lot better since then, so during my annual week-long coding
+sabbatical this year, I thought to give it another try, but, instead, using it as a
+pair-programming partner instead of a "do it for me" easy button.
 
 It's well known that running Claude with `--dangerously-skip-permissions` is the
 least annoying way of using it (unless you like being asked to confirm every
